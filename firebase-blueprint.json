@@ -1,0 +1,801 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Registered customer, trainer, manager, or super admin profile with role-based permissions.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "email": { "type": "string", "format": "email", "maxLength": 160 },
+        "displayName": { "type": "string", "maxLength": 120 },
+        "phone": { "type": "string", "maxLength": 30 },
+        "governorate": { "type": "string", "maxLength": 60 },
+        "address": { "type": "string", "maxLength": 300 },
+        "role": { "type": "string", "enum": ["super_admin", "manager", "trainer", "customer"] },
+        "permissions": { "type": "array", "description": "Assigned admin/trainer modules (max 30)." },
+        "status": { "type": "string", "enum": ["active", "suspended"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "displayName", "role", "status", "createdAt"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Public networking equipment product catalog item.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "nameAr": { "type": "string", "maxLength": 160 },
+        "nameEn": { "type": "string", "maxLength": 160 },
+        "descriptionAr": { "type": "string", "maxLength": 3000 },
+        "descriptionEn": { "type": "string", "maxLength": 3000 },
+        "specsAr": { "type": "string", "maxLength": 3000 },
+        "specsEn": { "type": "string", "maxLength": 3000 },
+        "brandId": { "type": "string", "maxLength": 128 },
+        "brandName": { "type": "string", "maxLength": 100 },
+        "modelNumber": { "type": "string", "maxLength": 100 },
+        "categoryId": { "type": "string", "maxLength": 128 },
+        "categoryNameAr": { "type": "string", "maxLength": 100 },
+        "categoryNameEn": { "type": "string", "maxLength": 100 },
+        "retailPrice": { "type": "number" },
+        "previousPrice": { "type": "number" },
+        "discountPercentage": { "type": "number" },
+        "availableQuantity": { "type": "integer" },
+        "status": { "type": "string", "enum": ["available", "limited_stock", "out_of_stock", "coming_soon", "discontinued"] },
+        "isFeatured": { "type": "boolean" },
+        "isNewArrival": { "type": "boolean" },
+        "isExclusive": { "type": "boolean" },
+        "isBestSeller": { "type": "boolean" },
+        "isPublished": { "type": "boolean" },
+        "tags": { "type": "array", "description": "Product tags (max 10)." },
+        "images": { "type": "array", "description": "Product image URLs (max 8)." },
+        "documentationUrl": { "type": "string", "maxLength": 500 },
+        "warrantyAr": { "type": "string", "maxLength": 200 },
+        "warrantyEn": { "type": "string", "maxLength": 200 },
+        "viewCount": { "type": "integer" },
+        "reservationCount": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "nameAr", "nameEn", "brandId", "categoryId", "retailPrice", "availableQuantity", "status", "isPublished", "createdAt"]
+    },
+    "ProductPrivate": {
+      "title": "ProductPrivate",
+      "description": "Admin-only wholesale pricing and supplier metadata.",
+      "type": "object",
+      "properties": {
+        "productId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "wholesalePrice": { "type": "number" },
+        "supplierNotes": { "type": "string", "maxLength": 1000 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["productId", "wholesalePrice", "updatedAt"]
+    },
+    "Category": {
+      "title": "Category",
+      "description": "Networking product category.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "nameAr": { "type": "string", "maxLength": 100 },
+        "nameEn": { "type": "string", "maxLength": 100 },
+        "slug": { "type": "string", "maxLength": 100 },
+        "descriptionAr": { "type": "string", "maxLength": 500 },
+        "descriptionEn": { "type": "string", "maxLength": 500 },
+        "icon": { "type": "string", "maxLength": 60 },
+        "order": { "type": "integer" },
+        "isActive": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "nameAr", "nameEn", "slug", "order", "isActive", "createdAt"]
+    },
+    "Brand": {
+      "title": "Brand",
+      "description": "Hardware brand (MikroTik, Ubiquiti, TP-Link, OpenWrt, etc.).",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "nameAr": { "type": "string", "maxLength": 100 },
+        "nameEn": { "type": "string", "maxLength": 100 },
+        "slug": { "type": "string", "maxLength": 100 },
+        "country": { "type": "string", "maxLength": 80 },
+        "logoText": { "type": "string", "maxLength": 60 },
+        "isFeatured": { "type": "boolean" },
+        "isActive": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "nameAr", "nameEn", "slug", "isFeatured", "isActive", "createdAt"]
+    },
+    "Offer": {
+      "title": "Offer",
+      "description": "Dynamic scheduled offer or promotion.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "titleAr": { "type": "string", "maxLength": 160 },
+        "titleEn": { "type": "string", "maxLength": 160 },
+        "descriptionAr": { "type": "string", "maxLength": 1500 },
+        "descriptionEn": { "type": "string", "maxLength": 1500 },
+        "sectionType": { "type": "string", "enum": ["today_deals", "weekly_offers", "exclusive_offers", "limited_time", "wholesale_offers", "new_promotions"] },
+        "productId": { "type": "string", "maxLength": 128 },
+        "productNameAr": { "type": "string", "maxLength": 160 },
+        "productNameEn": { "type": "string", "maxLength": 160 },
+        "imageUrl": { "type": "string", "maxLength": 500 },
+        "originalPrice": { "type": "number" },
+        "discountedPrice": { "type": "number" },
+        "availableQuantity": { "type": "integer" },
+        "startDate": { "type": "string", "maxLength": 40 },
+        "endDate": { "type": "string", "maxLength": 40 },
+        "isFeatured": { "type": "boolean" },
+        "isActive": { "type": "boolean" },
+        "autoActivate": { "type": "boolean" },
+        "autoExpire": { "type": "boolean" },
+        "clickCount": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "titleAr", "titleEn", "sectionType", "productId", "originalPrice", "discountedPrice", "startDate", "endDate", "isActive", "createdAt"]
+    },
+    "Advertisement": {
+      "title": "Advertisement",
+      "description": "Scheduled advertisement banner, poster, popup, or announcement.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "titleAr": { "type": "string", "maxLength": 160 },
+        "titleEn": { "type": "string", "maxLength": 160 },
+        "textAr": { "type": "string", "maxLength": 600 },
+        "textEn": { "type": "string", "maxLength": 600 },
+        "imageUrl": { "type": "string", "maxLength": 500 },
+        "adType": { "type": "string", "enum": ["homepage_banner", "promotional_poster", "product_ad", "special_campaign", "brand_ad", "seasonal_offer", "announcement_banner", "popup_ad"] },
+        "displayLocation": { "type": "string", "maxLength": 80 },
+        "targetPage": { "type": "string", "maxLength": 80 },
+        "destinationUrl": { "type": "string", "maxLength": 300 },
+        "startDate": { "type": "string", "maxLength": 40 },
+        "endDate": { "type": "string", "maxLength": 40 },
+        "priority": { "type": "integer" },
+        "isActive": { "type": "boolean" },
+        "impressions": { "type": "integer" },
+        "clicks": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "titleAr", "titleEn", "adType", "displayLocation", "startDate", "endDate", "priority", "isActive", "createdAt"]
+    },
+    "Reservation": {
+      "title": "Reservation",
+      "description": "Customer product reservation record (PII protected).",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "referenceNumber": { "type": "string", "maxLength": 40, "pattern": "^ASM-[0-9]{6}$" },
+        "batchId": { "type": "string", "maxLength": 80 },
+        "customerUid": { "type": "string", "maxLength": 128 },
+        "customerName": { "type": "string", "maxLength": 120 },
+        "phone": { "type": "string", "maxLength": 30 },
+        "governorate": { "type": "string", "maxLength": 60 },
+        "address": { "type": "string", "maxLength": 300 },
+        "notes": { "type": "string", "maxLength": 600 },
+        "productId": { "type": "string", "maxLength": 128 },
+        "productNameAr": { "type": "string", "maxLength": 160 },
+        "productNameEn": { "type": "string", "maxLength": 160 },
+        "unitPrice": { "type": "number" },
+        "quantity": { "type": "integer" },
+        "discountAmount": { "type": "number" },
+        "shippingCost": { "type": "number" },
+        "totalPrice": { "type": "number" },
+        "status": { "type": "string", "enum": ["pending", "confirmed", "preparing", "ready_for_pickup", "out_for_delivery", "completed", "cancelled"] },
+        "paymentMethod": { "type": "string", "maxLength": 60 },
+        "invoiceId": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "referenceNumber", "customerName", "phone", "governorate", "address", "productId", "quantity", "totalPrice", "status", "createdAt"]
+    },
+    "ReservationTracking": {
+      "title": "ReservationTracking",
+      "description": "Public-safe reservation status lookup keyed by referenceNumber_phone (no street address PII).",
+      "type": "object",
+      "properties": {
+        "trackingId": { "type": "string", "maxLength": 80, "pattern": "^ASM-[0-9]{6}_[0-9]{7,15}$" },
+        "reservationId": { "type": "string", "maxLength": 128 },
+        "referenceNumber": { "type": "string", "maxLength": 40 },
+        "productNameAr": { "type": "string", "maxLength": 160 },
+        "productNameEn": { "type": "string", "maxLength": 160 },
+        "quantity": { "type": "integer" },
+        "totalPrice": { "type": "number" },
+        "governorate": { "type": "string", "maxLength": 60 },
+        "status": { "type": "string", "enum": ["pending", "confirmed", "preparing", "ready_for_pickup", "out_for_delivery", "completed", "cancelled"] },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["trackingId", "reservationId", "referenceNumber", "productNameAr", "quantity", "totalPrice", "status", "updatedAt"]
+    },
+    "HomepageSection": {
+      "title": "HomepageSection",
+      "description": "Configurable homepage section managed from Admin Homepage Builder.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "sectionType": { "type": "string", "enum": ["hero", "featured_products", "latest_offers", "exclusive_products", "new_arrivals", "best_sellers", "categories", "brands", "advertisements", "announcements", "custom_banner", "contact_support"] },
+        "titleAr": { "type": "string", "maxLength": 160 },
+        "titleEn": { "type": "string", "maxLength": 160 },
+        "subtitleAr": { "type": "string", "maxLength": 400 },
+        "subtitleEn": { "type": "string", "maxLength": 400 },
+        "imageUrl": { "type": "string", "maxLength": 500 },
+        "ctaTextAr": { "type": "string", "maxLength": 80 },
+        "ctaTextEn": { "type": "string", "maxLength": 80 },
+        "ctaLink": { "type": "string", "maxLength": 200 },
+        "selectedProductIds": { "type": "array", "description": "Featured product IDs (max 12)." },
+        "selectedOfferIds": { "type": "array", "description": "Featured offer IDs (max 12)." },
+        "order": { "type": "integer" },
+        "isEnabled": { "type": "boolean" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "sectionType", "titleAr", "titleEn", "order", "isEnabled", "updatedAt"]
+    },
+    "StoreSettings": {
+      "title": "StoreSettings",
+      "description": "Public store settings, announcements, contact info, and enabled payment options.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "storeNameAr": { "type": "string", "maxLength": 100 },
+        "storeNameEn": { "type": "string", "maxLength": 100 },
+        "sloganAr": { "type": "string", "maxLength": 200 },
+        "sloganEn": { "type": "string", "maxLength": 200 },
+        "locationAr": { "type": "string", "maxLength": 240 },
+        "locationEn": { "type": "string", "maxLength": 240 },
+        "phones": { "type": "array", "description": "Store phone numbers (max 5)." },
+        "announcementAr": { "type": "string", "maxLength": 400 },
+        "announcementEn": { "type": "string", "maxLength": 400 },
+        "showAnnouncement": { "type": "boolean" },
+        "currencyCode": { "type": "string", "maxLength": 10 },
+        "requireOnlinePayment": { "type": "boolean" },
+        "enabledPaymentMethods": { "type": "array", "description": "Enabled payment options (max 8)." },
+        "paymentAccounts": { "type": "array", "description": "Configured bank & wallet payment accounts (max 12)." },
+        "whatsappNumber": { "type": "string", "maxLength": 30 },
+        "whatsappIntegrationStatus": { "type": "string", "enum": ["ready_for_api", "connected", "disabled"] },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "storeNameAr", "storeNameEn", "locationAr", "locationEn", "phones", "currencyCode", "updatedAt"]
+    },
+    "AdminSettings": {
+      "title": "AdminSettings",
+      "description": "Private Super Admin integration settings for future WhatsApp Business API & payment gateways.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "whatsappBusinessPhoneId": { "type": "string", "maxLength": 120 },
+        "whatsappWebhookVerifyToken": { "type": "string", "maxLength": 120 },
+        "whatsappAutoNotifyBookings": { "type": "boolean" },
+        "lowStockThreshold": { "type": "integer" },
+        "paymentGatewayProvider": { "type": "string", "maxLength": 80 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "lowStockThreshold", "updatedAt"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "In-app & WhatsApp-ready notification for admins or customers.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "recipientType": { "type": "string", "enum": ["admin", "customer"] },
+        "recipientUid": { "type": "string", "maxLength": 128 },
+        "targetPhone": { "type": "string", "maxLength": 30 },
+        "type": { "type": "string", "enum": ["new_reservation", "reservation_cancelled", "reservation_updated", "low_stock", "offer_expiring", "new_customer", "invoice_issued", "back_in_stock", "price_drop", "new_course", "community_reply", "quiz_reminder", "reward_earned", "lab_approved", "badge_verified"] },
+        "titleAr": { "type": "string", "maxLength": 160 },
+        "titleEn": { "type": "string", "maxLength": 160 },
+        "messageAr": { "type": "string", "maxLength": 500 },
+        "messageEn": { "type": "string", "maxLength": 500 },
+        "relatedId": { "type": "string", "maxLength": 128 },
+        "whatsappReady": { "type": "boolean" },
+        "isRead": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "recipientType", "type", "titleAr", "titleEn", "messageAr", "messageEn", "isRead", "createdAt"]
+    },
+    "ActivityLog": {
+      "title": "ActivityLog",
+      "description": "Audit log of admin and manager actions.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "actorUid": { "type": "string", "maxLength": 128 },
+        "actorEmail": { "type": "string", "maxLength": 160 },
+        "actorRole": { "type": "string", "maxLength": 40 },
+        "action": { "type": "string", "maxLength": 100 },
+        "entityType": { "type": "string", "maxLength": 60 },
+        "entityId": { "type": "string", "maxLength": 128 },
+        "summaryAr": { "type": "string", "maxLength": 300 },
+        "summaryEn": { "type": "string", "maxLength": 300 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "actorUid", "actorEmail", "action", "entityType", "summaryAr", "createdAt"]
+    },
+    "StoreBackup": {
+      "title": "StoreBackup",
+      "description": "Metadata record for exported store backup checkpoints.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "label": { "type": "string", "maxLength": 160 },
+        "createdByUid": { "type": "string", "maxLength": 128 },
+        "createdByEmail": { "type": "string", "maxLength": 160 },
+        "recordCounts": { "type": "object" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "label", "createdByUid", "createdAt"]
+    },
+    "FavoriteItem": {
+      "title": "FavoriteItem",
+      "description": "User-saved favorite networking product in their wishlist.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "uid": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "productId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "productNameAr": { "type": "string", "maxLength": 160 },
+        "productNameEn": { "type": "string", "maxLength": 160 },
+        "brandName": { "type": "string", "maxLength": 100 },
+        "modelNumber": { "type": "string", "maxLength": 100 },
+        "retailPrice": { "type": "number" },
+        "imageUrl": { "type": "string", "maxLength": 500 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "uid", "productId", "productNameAr", "productNameEn", "retailPrice", "createdAt"]
+    },
+    "Invoice": {
+      "title": "Invoice",
+      "description": "Immutable electronic sales invoice linked to a reservation or issued manually by staff.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "invoiceNumber": { "type": "string", "maxLength": 40, "pattern": "^INV-[0-9]{4}-[0-9]{4,8}$" },
+        "reservationId": { "type": "string", "maxLength": 128 },
+        "referenceNumber": { "type": "string", "maxLength": 40 },
+        "customerUid": { "type": "string", "maxLength": 128 },
+        "customerName": { "type": "string", "maxLength": 120 },
+        "customerPhone": { "type": "string", "maxLength": 30 },
+        "governorate": { "type": "string", "maxLength": 60 },
+        "address": { "type": "string", "maxLength": 300 },
+        "items": { "type": "array", "description": "Invoice product line items (1 to 50)." },
+        "subtotal": { "type": "number" },
+        "discountAmount": { "type": "number" },
+        "shippingCost": { "type": "number" },
+        "totalAmount": { "type": "number" },
+        "paidAmount": { "type": "number" },
+        "remainingAmount": { "type": "number" },
+        "paymentStatus": { "type": "string", "enum": ["paid", "partial", "unpaid"] },
+        "paymentMethod": { "type": "string", "maxLength": 80 },
+        "paymentMethodLabel": { "type": "string", "maxLength": 160 },
+        "notes": { "type": "string", "maxLength": 800 },
+        "issuedByUid": { "type": "string", "maxLength": 128 },
+        "issuedByName": { "type": "string", "maxLength": 120 },
+        "source": { "type": "string", "enum": ["auto_reservation", "manual_reservation", "manual_standalone"] },
+        "isLocked": { "type": "boolean" },
+        "sentToCustomerAt": { "type": "string", "maxLength": 40 },
+        "issuedAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "id", "invoiceNumber", "customerName", "customerPhone", "items",
+        "subtotal", "discountAmount", "shippingCost", "totalAmount",
+        "paidAmount", "remainingAmount", "paymentStatus", "paymentMethod",
+        "issuedByUid", "source", "isLocked", "issuedAt", "updatedAt"
+      ]
+    },
+    "InvoiceCounter": {
+      "title": "InvoiceCounter",
+      "description": "Atomic sequential counter for unique electronic invoice numbers.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "year": { "type": "integer" },
+        "lastSequence": { "type": "integer" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "year", "lastSequence", "updatedAt"]
+    },
+    "ProjectPackage": {
+      "title": "ProjectPackage",
+      "description": "Ready-made customizable networking project package composed of store products.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "titleAr": { "type": "string", "maxLength": 160 },
+        "titleEn": { "type": "string", "maxLength": 160 },
+        "descriptionAr": { "type": "string", "maxLength": 2000 },
+        "descriptionEn": { "type": "string", "maxLength": 2000 },
+        "categoryType": { "type": "string", "enum": ["internet_setup", "isp", "cctv", "wireless_link", "server_room", "smb"] },
+        "targetSubscribers": { "type": "string", "maxLength": 80 },
+        "coverageArea": { "type": "string", "maxLength": 80 },
+        "items": { "type": "array", "description": "Package items (1 to 25)." },
+        "packageDiscountPercent": { "type": "number" },
+        "imageUrl": { "type": "string", "maxLength": 500 },
+        "isFeatured": { "type": "boolean" },
+        "isActive": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "titleAr", "titleEn", "categoryType", "items", "isActive", "createdAt", "updatedAt"]
+    },
+    "CommunityPost": {
+      "title": "CommunityPost",
+      "description": "ASEMA engineering community post, Q&A, or project showcase.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "authorUid": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "authorName": { "type": "string", "maxLength": 120 },
+        "authorSpecialty": { "type": "string", "maxLength": 120 },
+        "authorVerified": { "type": "boolean" },
+        "category": { "type": "string", "enum": ["mikrotik", "ubiquiti", "wireless", "fiber", "cctv", "servers", "general"] },
+        "title": { "type": "string", "maxLength": 200 },
+        "content": { "type": "string", "maxLength": 6000 },
+        "imageUrl": { "type": "string", "maxLength": 500 },
+        "tags": { "type": "array", "description": "Post tags (max 8)." },
+        "helpfulCount": { "type": "integer" },
+        "commentCount": { "type": "integer" },
+        "isPinned": { "type": "boolean" },
+        "isLocked": { "type": "boolean" },
+        "status": { "type": "string", "enum": ["active", "hidden"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "authorUid", "authorName", "category", "title", "content", "helpfulCount", "commentCount", "isPinned", "status", "createdAt", "updatedAt"]
+    },
+    "CommunityComment": {
+      "title": "CommunityComment",
+      "description": "Comment or technical solution on a community post.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "postId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "authorUid": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "authorName": { "type": "string", "maxLength": 120 },
+        "authorSpecialty": { "type": "string", "maxLength": 120 },
+        "content": { "type": "string", "maxLength": 3000 },
+        "isSolution": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "postId", "authorUid", "authorName", "content", "isSolution", "createdAt"]
+    },
+    "CommunityReport": {
+      "title": "CommunityReport",
+      "description": "Moderation report submitted by community members.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "targetType": { "type": "string", "enum": ["post", "comment", "lab_resource"] },
+        "targetId": { "type": "string", "maxLength": 128 },
+        "postId": { "type": "string", "maxLength": 128 },
+        "reporterUid": { "type": "string", "maxLength": 128 },
+        "reporterName": { "type": "string", "maxLength": 120 },
+        "reason": { "type": "string", "maxLength": 160 },
+        "details": { "type": "string", "maxLength": 1000 },
+        "status": { "type": "string", "enum": ["pending", "reviewed", "dismissed"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "targetType", "targetId", "reporterUid", "reporterName", "reason", "status", "createdAt", "updatedAt"]
+    },
+    "AcademyCourse": {
+      "title": "AcademyCourse",
+      "description": "Technical networking course managed by Academy trainers and staff.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "titleAr": { "type": "string", "maxLength": 180 },
+        "titleEn": { "type": "string", "maxLength": 180 },
+        "descriptionAr": { "type": "string", "maxLength": 3000 },
+        "descriptionEn": { "type": "string", "maxLength": 3000 },
+        "track": { "type": "string", "enum": ["mikrotik", "ubiquiti", "fundamentals", "wireless", "fiber", "cctv", "servers_linux", "troubleshooting"] },
+        "level": { "type": "string", "enum": ["beginner", "intermediate", "advanced"] },
+        "instructorUid": { "type": "string", "maxLength": 128 },
+        "instructorName": { "type": "string", "maxLength": 120 },
+        "thumbnailUrl": { "type": "string", "maxLength": 500 },
+        "durationMinutes": { "type": "integer" },
+        "pointsReward": { "type": "integer" },
+        "lessons": { "type": "array", "description": "Structured course lessons (max 30)." },
+        "quizQuestions": { "type": "array", "description": "Course assessment questions (max 25)." },
+        "passingScorePercent": { "type": "integer" },
+        "isPublished": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "titleAr", "titleEn", "track", "level", "instructorName", "durationMinutes", "pointsReward", "lessons", "quizQuestions", "passingScorePercent", "isPublished", "createdAt", "updatedAt"]
+    },
+    "AcademyEnrollment": {
+      "title": "AcademyEnrollment",
+      "description": "Learner progress, bookmarks, and quiz state per Academy course.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "uid": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "studentName": { "type": "string", "maxLength": 120 },
+        "courseId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "courseTitleAr": { "type": "string", "maxLength": 180 },
+        "instructorUid": { "type": "string", "maxLength": 128 },
+        "completedLessonIds": { "type": "array", "description": "Completed lesson IDs (max 40)." },
+        "bookmarkedLessonIds": { "type": "array", "description": "Bookmarked lesson IDs (max 40)." },
+        "lastLessonId": { "type": "string", "maxLength": 128 },
+        "progressPercent": { "type": "integer" },
+        "quizAttempts": { "type": "integer" },
+        "bestQuizScore": { "type": "integer" },
+        "passedQuiz": { "type": "boolean" },
+        "certificateCode": { "type": "string", "maxLength": 40 },
+        "completedAt": { "type": "string", "maxLength": 40 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "uid", "studentName", "courseId", "courseTitleAr", "completedLessonIds", "bookmarkedLessonIds", "progressPercent", "quizAttempts", "bestQuizScore", "passedQuiz", "createdAt", "updatedAt"]
+    },
+    "AcademyCertificate": {
+      "title": "AcademyCertificate",
+      "description": "Publicly verifiable Academy completion certificate without sensitive PII.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "certificateCode": { "type": "string", "maxLength": 40, "pattern": "^ASEMA-CERT-[0-9]{4}-[0-9]{4,8}$" },
+        "uid": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "studentName": { "type": "string", "maxLength": 120 },
+        "courseId": { "type": "string", "maxLength": 128 },
+        "courseTitleAr": { "type": "string", "maxLength": 180 },
+        "courseTitleEn": { "type": "string", "maxLength": 180 },
+        "track": { "type": "string", "maxLength": 60 },
+        "level": { "type": "string", "maxLength": 40 },
+        "scorePercent": { "type": "integer" },
+        "instructorName": { "type": "string", "maxLength": 120 },
+        "isValid": { "type": "boolean" },
+        "issuedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "certificateCode", "uid", "studentName", "courseId", "courseTitleAr", "track", "level", "scorePercent", "instructorName", "isValid", "issuedAt"]
+    },
+    "EngineerProfile": {
+      "title": "EngineerProfile",
+      "description": "Digital professional identity card and optional public directory entry for network engineers & technicians.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "membershipId": { "type": "string", "maxLength": 40, "pattern": "^ASM-ENG-[0-9A-Z]{4,10}$" },
+        "fullName": { "type": "string", "maxLength": 120 },
+        "photoUrl": { "type": "string", "maxLength": 500 },
+        "specialty": { "type": "string", "maxLength": 140 },
+        "yearsExperience": { "type": "integer" },
+        "skills": { "type": "array", "description": "Engineer skills (max 20)." },
+        "certificates": { "type": "array", "description": "Earned certifications list (max 15)." },
+        "projectsSummary": { "type": "string", "maxLength": 1500 },
+        "governorate": { "type": "string", "maxLength": 60 },
+        "contactPhone": { "type": "string", "maxLength": 30 },
+        "contactEmail": { "type": "string", "maxLength": 160 },
+        "showInDirectory": { "type": "boolean" },
+        "isVerified": { "type": "boolean" },
+        "verificationBadge": { "type": "string", "maxLength": 80 },
+        "verificationStatus": { "type": "string", "enum": ["none", "pending", "approved", "rejected"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "membershipId", "fullName", "specialty", "yearsExperience", "skills", "showInDirectory", "isVerified", "verificationStatus", "createdAt", "updatedAt"]
+    },
+    "UserRewards": {
+      "title": "UserRewards",
+      "description": "Customer and learner loyalty points, badges, and reward redemption log.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "totalPoints": { "type": "integer" },
+        "lifetimePoints": { "type": "integer" },
+        "academyPoints": { "type": "integer" },
+        "purchasePoints": { "type": "integer" },
+        "badges": { "type": "array", "description": "Earned achievement badges (max 20)." },
+        "redeemedOffers": { "type": "array", "description": "Redeemed reward offer IDs (max 30)." },
+        "recentEvents": { "type": "array", "description": "Recent points events (max 20)." },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "totalPoints", "lifetimePoints", "academyPoints", "purchasePoints", "badges", "redeemedOffers", "recentEvents", "createdAt", "updatedAt"]
+    },
+    "RewardOffer": {
+      "title": "RewardOffer",
+      "description": "Redeemable reward voucher or exclusive offer for active platform members.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "titleAr": { "type": "string", "maxLength": 160 },
+        "titleEn": { "type": "string", "maxLength": 160 },
+        "descriptionAr": { "type": "string", "maxLength": 800 },
+        "descriptionEn": { "type": "string", "maxLength": 800 },
+        "pointsCost": { "type": "integer" },
+        "discountCode": { "type": "string", "maxLength": 40 },
+        "discountValueText": { "type": "string", "maxLength": 80 },
+        "isActive": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "titleAr", "titleEn", "pointsCost", "discountValueText", "isActive", "createdAt", "updatedAt"]
+    },
+    "LabResource": {
+      "title": "LabResource",
+      "description": "Technical Lab library item (MikroTik scripts, configs, guides, manuals) with moderation workflow.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "title": { "type": "string", "maxLength": 180 },
+        "summary": { "type": "string", "maxLength": 1000 },
+        "resourceType": { "type": "string", "enum": ["mikrotik_script", "config_file", "routeros_guide", "fault_solution", "manual", "tool_driver"] },
+        "category": { "type": "string", "maxLength": 80 },
+        "deviceModels": { "type": "string", "maxLength": 200 },
+        "contentBody": { "type": "string", "maxLength": 12000 },
+        "downloadUrl": { "type": "string", "maxLength": 500 },
+        "authorUid": { "type": "string", "maxLength": 128 },
+        "authorName": { "type": "string", "maxLength": 120 },
+        "status": { "type": "string", "enum": ["pending_review", "approved", "rejected"] },
+        "reviewNote": { "type": "string", "maxLength": 400 },
+        "copyCount": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "title", "summary", "resourceType", "category", "contentBody", "authorUid", "authorName", "status", "copyCount", "createdAt", "updatedAt"]
+    },
+    "PriceHistoryEntry": {
+      "title": "PriceHistoryEntry",
+      "description": "Immutable log of real product price updates displayed in Market Index.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "productId": { "type": "string", "maxLength": 128 },
+        "productNameAr": { "type": "string", "maxLength": 160 },
+        "productNameEn": { "type": "string", "maxLength": 160 },
+        "brandName": { "type": "string", "maxLength": 100 },
+        "oldPrice": { "type": "number" },
+        "newPrice": { "type": "number" },
+        "changePercent": { "type": "number" },
+        "changedByUid": { "type": "string", "maxLength": 128 },
+        "changedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "productId", "productNameAr", "productNameEn", "oldPrice", "newPrice", "changePercent", "changedByUid", "changedAt"]
+    },
+    "AlertSubscription": {
+      "title": "AlertSubscription",
+      "description": "User subscription for back-in-stock, price drop, new course, and offer alerts.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "uid": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "alertType": { "type": "string", "enum": ["back_in_stock", "price_drop", "new_course", "offers", "community"] },
+        "productId": { "type": "string", "maxLength": 128 },
+        "productNameAr": { "type": "string", "maxLength": 160 },
+        "targetPrice": { "type": "number" },
+        "isActive": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "uid", "alertType", "isActive", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{uid}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Registered user and staff accounts."
+    },
+    "/users/{uid}/favorites/{favoriteId}": {
+      "schema": { "$ref": "#/entities/FavoriteItem" },
+      "description": "User wishlist / favorite networking products."
+    },
+    "/products/{productId}": {
+      "schema": { "$ref": "#/entities/Product" },
+      "description": "Public networking hardware catalog."
+    },
+    "/product_private/{productId}": {
+      "schema": { "$ref": "#/entities/ProductPrivate" },
+      "description": "Admin-only wholesale pricing and supplier info."
+    },
+    "/categories/{categoryId}": {
+      "schema": { "$ref": "#/entities/Category" },
+      "description": "Store categories."
+    },
+    "/brands/{brandId}": {
+      "schema": { "$ref": "#/entities/Brand" },
+      "description": "Featured hardware brands."
+    },
+    "/offers/{offerId}": {
+      "schema": { "$ref": "#/entities/Offer" },
+      "description": "Scheduled promotional offers."
+    },
+    "/advertisements/{adId}": {
+      "schema": { "$ref": "#/entities/Advertisement" },
+      "description": "Scheduled marketing banners, posters, and popups."
+    },
+    "/reservations/{reservationId}": {
+      "schema": { "$ref": "#/entities/Reservation" },
+      "description": "Customer product bookings and reservation records."
+    },
+    "/reservation_tracking/{trackingId}": {
+      "schema": { "$ref": "#/entities/ReservationTracking" },
+      "description": "Public-safe booking lookup by referenceNumber_phone."
+    },
+    "/homepage_sections/{sectionId}": {
+      "schema": { "$ref": "#/entities/HomepageSection" },
+      "description": "Dynamic homepage layout sections."
+    },
+    "/store_settings/{settingId}": {
+      "schema": { "$ref": "#/entities/StoreSettings" },
+      "description": "Public store details and announcements."
+    },
+    "/admin_settings/{settingId}": {
+      "schema": { "$ref": "#/entities/AdminSettings" },
+      "description": "Super admin private integration settings."
+    },
+    "/notifications/{notificationId}": {
+      "schema": { "$ref": "#/entities/Notification" },
+      "description": "Admin and customer notifications."
+    },
+    "/activity_logs/{logId}": {
+      "schema": { "$ref": "#/entities/ActivityLog" },
+      "description": "Admin and manager audit logs."
+    },
+    "/store_backups/{backupId}": {
+      "schema": { "$ref": "#/entities/StoreBackup" },
+      "description": "Backup checkpoints metadata."
+    },
+    "/invoices/{invoiceId}": {
+      "schema": { "$ref": "#/entities/Invoice" },
+      "description": "Electronic PDF sales invoices archive."
+    },
+    "/invoice_counters/{counterId}": {
+      "schema": { "$ref": "#/entities/InvoiceCounter" },
+      "description": "Sequential invoice number counters."
+    },
+    "/project_packages/{packageId}": {
+      "schema": { "$ref": "#/entities/ProjectPackage" },
+      "description": "Ready-made networking project bundles."
+    },
+    "/community_posts/{postId}": {
+      "schema": { "$ref": "#/entities/CommunityPost" },
+      "description": "Engineering community discussions and showcases."
+    },
+    "/community_posts/{postId}/comments/{commentId}": {
+      "schema": { "$ref": "#/entities/CommunityComment" },
+      "description": "Comments and solutions under community posts."
+    },
+    "/community_reports/{reportId}": {
+      "schema": { "$ref": "#/entities/CommunityReport" },
+      "description": "Content moderation reports."
+    },
+    "/academy_courses/{courseId}": {
+      "schema": { "$ref": "#/entities/AcademyCourse" },
+      "description": "Academy technical courses, lessons, and quizzes."
+    },
+    "/academy_enrollments/{enrollmentId}": {
+      "schema": { "$ref": "#/entities/AcademyEnrollment" },
+      "description": "Learner progress and quiz records."
+    },
+    "/academy_certificates/{certId}": {
+      "schema": { "$ref": "#/entities/AcademyCertificate" },
+      "description": "Verifiable Academy completion certificates."
+    },
+    "/engineer_profiles/{uid}": {
+      "schema": { "$ref": "#/entities/EngineerProfile" },
+      "description": "Digital engineer identity cards and opt-in directory entries."
+    },
+    "/user_rewards/{uid}": {
+      "schema": { "$ref": "#/entities/UserRewards" },
+      "description": "Loyalty points, achievement badges, and redemptions."
+    },
+    "/reward_offers/{rewardId}": {
+      "schema": { "$ref": "#/entities/RewardOffer" },
+      "description": "Exclusive customer reward vouchers and offers."
+    },
+    "/lab_resources/{resourceId}": {
+      "schema": { "$ref": "#/entities/LabResource" },
+      "description": "ASEMA Technical Lab scripts, configs, manuals, and troubleshooting guides."
+    },
+    "/price_history/{entryId}": {
+      "schema": { "$ref": "#/entities/PriceHistoryEntry" },
+      "description": "Real historical product price updates for Market Index."
+    },
+    "/alert_subscriptions/{subId}": {
+      "schema": { "$ref": "#/entities/AlertSubscription" },
+      "description": "User-configured smart alert subscriptions."
+    }
+  }
+}

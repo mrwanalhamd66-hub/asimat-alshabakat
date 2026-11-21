@@ -1,0 +1,8 @@
+{
+  "name": "Remix ASEMA NETWORKS | عاصمة الشبكات",
+  "description": "المتجر المتخصص لمعدات الشبكات والراوترات وأجهزة مايكروتك وأوبن دبليو آر تي وحلول الواي فاي في اليمن، مع نظام حجز إلكتروني ودردشة فورية ومركز تحكم إداري متكامل.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
