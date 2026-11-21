@@ -1,4 +1,21 @@
 {
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        {
+          "key": "Permissions-Policy",
+          "value": "accelerometer=(self \"https://www.youtube-nocookie.com\" \"https://www.youtube.com\"), autoplay=(self \"https://www.youtube-nocookie.com\" \"https://www.youtube.com\"), encrypted-media=(self \"https://www.youtube-nocookie.com\" \"https://www.youtube.com\"), fullscreen=(self \"https://www.youtube-nocookie.com\" \"https://www.youtube.com\"), gyroscope=(self \"https://www.youtube-nocookie.com\" \"https://www.youtube.com\"), picture-in-picture=(self \"https://www.youtube-nocookie.com\" \"https://www.youtube.com\")"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.youtube.com https://www.youtube-nocookie.com https://s.ytimg.com https://apis.google.com https://www.gstatic.com https://www.googleapis.com https://*.firebaseapp.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://i.ytimg.com https://i9.ytimg.com https://yt3.ggpht.com https://lh3.googleusercontent.com https:; frame-src 'self' https://www.youtube-nocookie.com https://www.youtube.com https://accounts.google.com https://apis.google.com https://*.firebaseapp.com https://*.web.app; child-src 'self' blob: https://www.youtube-nocookie.com https://www.youtube.com https://*.firebaseapp.com; media-src 'self' blob: data: https://*.googlevideo.com https://www.youtube-nocookie.com https://www.youtube.com https:; connect-src 'self' ws: wss: https://*.googleapis.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.firebaseapp.com https://www.youtube-nocookie.com https://www.youtube.com https://i.ytimg.com https:; object-src 'none'; base-uri 'self'"
+        }
+      ]
+    }
+  ],
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]

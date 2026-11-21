@@ -6,6 +6,7 @@ import { Footer } from './components/Footer.tsx';
 import { ProductDetailModal } from './components/ProductDetailModal.tsx';
 import { CartDrawer } from './components/CartDrawer.tsx';
 import { LiveChatWidget } from './components/LiveChatWidget.tsx';
+import { MobileBottomNav } from './components/MobileBottomNav.tsx';
 import { OfflineIndicator } from './components/PWAInstallPrompt.tsx';
 import { HomePage } from './pages/HomePage.tsx';
 import { CatalogPage } from './pages/CatalogPage.tsx';
@@ -58,11 +59,12 @@ function MainRouter() {
           </div>
         </div>
       )}
-      <main className="flex-1">{renderPage()}</main>
+      <main className="flex-1 pb-20 md:pb-0">{renderPage()}</main>
       <Footer />
       <ProductDetailModal />
       <CartDrawer />
       <LiveChatWidget />
+      <MobileBottomNav />
       <OfflineIndicator />
     </div>
   );

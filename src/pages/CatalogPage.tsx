@@ -77,10 +77,10 @@ export function CatalogPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 space-y-8">
       <div className="space-y-2">
-        <h1 className="text-2xl sm:text-3xl font-bold text-[#0E0E10]">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0E0E10] dark:text-white font-display">
           {t(lang, 'كتالوج معدات الشبكات', 'Networking Equipment Catalog')}
         </h1>
-        <p className="text-sm text-neutral-600">
+        <p className="text-sm text-neutral-600 dark:text-neutral-300">
           {t(
             lang,
             'تصفح جميع أجهزة مايكروتك، راوترات Wi-Fi 6، OpenWrt، السويتشات والملحقات المتوفرة للحجز.',
@@ -90,22 +90,22 @@ export function CatalogPage() {
       </div>
 
       {/* Filter & Search Toolbar */}
-      <div className="bg-white border border-[#E5E5E0] rounded-xl p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-        <div className="lg:col-span-2 flex items-center bg-[#F8F8F7] border border-[#E5E5E0] rounded-lg px-3">
+      <div className="royal-card p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+        <div className="lg:col-span-2 flex items-center bg-[#F8F8F7] dark:bg-[#0E0E10] border border-[#E5E3DA] dark:border-white/15 focus-within:border-[#C89D3C] rounded-xl px-3 min-h-[44px]">
           <Search className="w-4 h-4 text-neutral-400 shrink-0" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t(lang, 'بحث بالاسم أو الموديل...', 'Search by name or model...')}
-            className="w-full bg-transparent px-2.5 py-2 text-sm focus:outline-none"
+            className="w-full bg-transparent px-2.5 py-2 text-sm text-[#0E0E10] dark:text-white placeholder:text-neutral-400 focus:outline-none"
           />
         </div>
 
         <select
           value={selectedCategoryFilter}
           onChange={(e) => setSelectedCategoryFilter(e.target.value)}
-          className="bg-[#F8F8F7] border border-[#E5E5E0] rounded-lg px-3 py-2 text-sm focus:outline-none"
+          className="min-h-[44px] bg-[#F8F8F7] dark:bg-[#0E0E10] text-[#0E0E10] dark:text-white border border-[#E5E3DA] dark:border-white/15 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#C89D3C]"
         >
           <option value="all">{t(lang, 'كل التصنيفات', 'All Categories')}</option>
           {categories.map((c) => (
@@ -118,7 +118,7 @@ export function CatalogPage() {
         <select
           value={selectedBrandFilter}
           onChange={(e) => setSelectedBrandFilter(e.target.value)}
-          className="bg-[#F8F8F7] border border-[#E5E5E0] rounded-lg px-3 py-2 text-sm focus:outline-none"
+          className="min-h-[44px] bg-[#F8F8F7] dark:bg-[#0E0E10] text-[#0E0E10] dark:text-white border border-[#E5E3DA] dark:border-white/15 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#C89D3C]"
         >
           <option value="all">{t(lang, 'كل العلامات', 'All Brands')}</option>
           {brands.map((b) => (
@@ -129,11 +129,11 @@ export function CatalogPage() {
         </select>
 
         <div className="flex items-center gap-2">
-          <SlidersHorizontal className="w-4 h-4 text-neutral-500 shrink-0" />
+          <SlidersHorizontal className="w-4 h-4 text-[#C89D3C] shrink-0" />
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-            className="w-full bg-[#F8F8F7] border border-[#E5E5E0] rounded-lg px-3 py-2 text-sm focus:outline-none"
+            className="w-full min-h-[44px] bg-[#F8F8F7] dark:bg-[#0E0E10] text-[#0E0E10] dark:text-white border border-[#E5E3DA] dark:border-white/15 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#C89D3C]"
           >
             <option value="newest">{t(lang, 'الأحدث', 'Newest')}</option>
             <option value="popular">{t(lang, 'الأكثر حجزاً', 'Most Reserved')}</option>
@@ -145,7 +145,7 @@ export function CatalogPage() {
 
       {/* Availability Filter Bar */}
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <div className="flex items-center gap-1 p-1 bg-neutral-200/70 rounded-lg overflow-x-auto">
+        <div className="flex items-center gap-1.5 p-1.5 bg-[#EAE8E1] dark:bg-[#17171B] border border-[#DFDCD2] dark:border-white/10 rounded-xl overflow-x-auto max-w-full">
           {[
             { id: 'all', ar: 'الكل', en: 'All' },
             { id: 'available', ar: 'متوفر', en: 'Available' },
@@ -165,10 +165,10 @@ export function CatalogPage() {
               key={tab.id}
               type="button"
               onClick={() => setStatusFilter(tab.id)}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+              className={`min-h-[38px] px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all active:scale-95 whitespace-nowrap shrink-0 cursor-pointer ${
                 statusFilter === tab.id
-                  ? 'bg-white text-[#0E0E10] shadow-sm'
-                  : 'text-neutral-600 hover:text-[#0E0E10]'
+                  ? 'bg-[#0E0E10] dark:bg-[#C89D3C] text-white dark:text-[#0E0E10] shadow-sm'
+                  : 'text-neutral-700 dark:text-neutral-300 hover:text-[#0E0E10] dark:hover:text-white'
               }`}
             >
               {lang === 'ar' ? tab.ar : tab.en}
@@ -176,14 +176,14 @@ export function CatalogPage() {
           ))}
         </div>
 
-        <span className="text-xs text-neutral-500 font-mono-num">
+        <span className="text-xs font-semibold text-neutral-600 dark:text-neutral-400 font-mono-num">
           {filtered.length} {t(lang, 'منتج', 'products')}
         </span>
       </div>
 
       {filtered.length === 0 ? (
-        <div className="bg-white border border-[#E5E5E0] rounded-xl p-12 text-center space-y-3">
-          <p className="text-base font-semibold text-[#0E0E10]">
+        <div className="royal-card p-12 text-center space-y-4">
+          <p className="text-base font-bold text-[#0E0E10] dark:text-white">
             {t(lang, 'لم يتم العثور على أجهزة مطابقة لبحثك', 'No matching equipment found')}
           </p>
           <button
@@ -194,7 +194,7 @@ export function CatalogPage() {
               setSelectedBrandFilter('all');
               setStatusFilter('all');
             }}
-            className="px-4 py-2 rounded-lg bg-[#0E0E10] text-white text-xs font-semibold cursor-pointer"
+            className="btn-obsidian"
           >
             {t(lang, 'إعادة تعيين الفلاتر', 'Reset Filters')}
           </button>

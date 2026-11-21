@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import {
+  AlertCircle,
   Award,
   BookOpen,
   CheckCircle2,
   Edit3,
+  Eye,
+  EyeOff,
   GraduationCap,
   Plus,
   ShieldAlert,
   ShieldCheck,
   Trash2,
   Users,
+  Video,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext.tsx';
 import { t } from '../../i18n/translations.ts';
@@ -31,6 +35,8 @@ import type {
   AcademyTrack,
 } from '../../types/index.ts';
 import { ImageUploader } from '../../components/ImageUploader.tsx';
+import { AcademyVideoPlayer } from '../../components/AcademyVideoPlayer.tsx';
+import { parseYouTubeVideo } from '../../utils/youtube.ts';
 
 const TRACK_OPTIONS: { id: AcademyTrack; ar: string; en: string }[] = [
   { id: 'mikrotik', ar: 'دورات MikroTik', en: 'MikroTik' },
@@ -48,6 +54,8 @@ export function AdminAcademyModule() {
   const [subTab, setSubTab] = useState<'courses' | 'enrollments' | 'certificates'>('courses');
   const [editing, setEditing] = useState<AcademyCourse | null>(null);
   const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [previewLessonIds, setPreviewLessonIds] = useState<Record<string, boolean>>({});
   const [enrollments, setEnrollments] = useState<AcademyEnrollment[]>([]);
   const [certificates, setCertificates] = useState<AcademyCertificate[]>([]);
 
@@ -61,6 +69,8 @@ export function AdminAcademyModule() {
   }, []);
 
   const openNewCourse = () => {
+    setFormError(null);
+    setPreviewLessonIds({});
     const now = new Date().toISOString();
     setEditing({
       id: `course_${Date.now()}`,
@@ -151,9 +161,32 @@ export function AdminAcademyModule() {
     setEditing({ ...editing, quizQuestions: editing.quizQuestions.filter((_, i) => i !== idx) });
   };
 
+  const toggleLessonPreview = (lessonId: string) => {
+    setPreviewLessonIds((prev) => ({ ...prev, [lessonId]: !prev[lessonId] }));
+  };
+
   const handleSaveCourse = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editing || !userProfile) return;
+    setFormError(null);
+
+    // Validate any non-empty lesson video URL before saving
+    for (let i = 0; i < editing.lessons.length; i += 1) {
+      const les = editing.lessons[i];
+      const rawUrl = (les.videoUrl || '').trim();
+      if (rawUrl) {
+        const parsed = parseYouTubeVideo(rawUrl);
+        if (!parsed.isValid) {
+          setFormError(
+            lang === 'ar'
+              ? `خطأ في رابط الفيديو بالدرس #${i + 1} (${les.titleAr || `الدرس ${i + 1}`}): ${parsed.errorAr || 'رابط غير صالح'}`
+              : `Invalid video URL in Lesson #${i + 1} (${les.titleEn || les.titleAr}): ${parsed.errorEn || 'Invalid URL'}`
+          );
+          return;
+        }
+      }
+    }
+
     setSaving(true);
     try {
       const now = new Date().toISOString();
@@ -170,6 +203,8 @@ export function AdminAcademyModule() {
           order: idx + 1,
           titleEn: l.titleEn?.trim() || l.titleAr.trim() || `Lesson ${idx + 1}`,
           durationMinutes: Math.max(1, Number(l.durationMinutes || 10)),
+          // Preserve the original clean YouTube URL in Firestore; embed URL is generated dynamically on render
+          videoUrl: (l.videoUrl || '').trim(),
         })),
         quizQuestions: editing.quizQuestions.filter((q) => q.questionAr.trim()),
         updatedAt: now,
@@ -188,6 +223,7 @@ export function AdminAcademyModule() {
         });
       }
       setEditing(null);
+      setPreviewLessonIds({});
     } finally {
       setSaving(false);
     }
@@ -384,59 +420,143 @@ export function AdminAcademyModule() {
               </button>
             </div>
 
-            {editing.lessons.map((les, idx) => (
-              <div
-                key={les.id}
-                className="p-4 rounded-xl bg-[#F8F8F7] dark:bg-[#0E0E10] border border-[#E5E5E0] dark:border-white/10 space-y-3"
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs font-bold text-[#9E7822] dark:text-[#D4AF37]">
-                    {t(lang, `الدرس #${idx + 1}`, `Lesson #${idx + 1}`)}
-                  </span>
-                  {editing.lessons.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => removeLessonRow(idx)}
-                      className="text-rose-600 text-xs hover:underline cursor-pointer"
-                    >
-                      {t(lang, 'حذف', 'Remove')}
-                    </button>
-                  )}
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-                  <input
+            {editing.lessons.map((les, idx) => {
+              const videoParsed = parseYouTubeVideo(les.videoUrl);
+              const showPreview = Boolean(previewLessonIds[les.id]);
+              return (
+                <div
+                  key={les.id}
+                  className="p-4 rounded-xl bg-[#F8F8F7] dark:bg-[#0E0E10] border border-[#E5E5E0] dark:border-white/10 space-y-3"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-bold text-[#9E7822] dark:text-[#D4AF37]">
+                      {t(lang, `الدرس #${idx + 1}`, `Lesson #${idx + 1}`)}
+                    </span>
+                    {editing.lessons.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeLessonRow(idx)}
+                        className="text-rose-600 text-xs hover:underline cursor-pointer"
+                      >
+                        {t(lang, 'حذف', 'Remove')}
+                      </button>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                    <input
+                      required
+                      value={les.titleAr}
+                      onChange={(e) => updateLessonRow(idx, { titleAr: e.target.value })}
+                      placeholder={t(lang, 'عنوان الدرس (عربي) *', 'Lesson Title (AR) *')}
+                      className="md:col-span-3 px-3 py-1.5 text-xs bg-white dark:bg-[#17171B] border border-[#E5E5E0] dark:border-white/10 rounded-lg"
+                    />
+                    <input
+                      type="number"
+                      min={1}
+                      value={les.durationMinutes}
+                      onChange={(e) => updateLessonRow(idx, { durationMinutes: Number(e.target.value) })}
+                      placeholder={t(lang, 'الدقائق', 'Mins')}
+                      className="px-3 py-1.5 text-xs bg-white dark:bg-[#17171B] border border-[#E5E5E0] dark:border-white/10 rounded-lg font-mono-num"
+                    />
+                  </div>
+
+                  {/* Smart YouTube Link Input + Auto Validation + Pre-publish Preview */}
+                  <div className="p-3 rounded-lg bg-white dark:bg-[#17171B] border border-[#E5E5E0] dark:border-white/10 space-y-2.5">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <label className="text-[11px] font-bold text-[#0E0E10] dark:text-white inline-flex items-center gap-1.5">
+                        <Video className="w-3.5 h-3.5 text-[#C89D3C]" />
+                        <span>{t(lang, 'رابط فيديو YouTube للدرس (اختياري)', 'Lesson YouTube Video URL (Optional)')}</span>
+                      </label>
+                      {videoParsed.isValid && (
+                        <button
+                          type="button"
+                          onClick={() => toggleLessonPreview(les.id)}
+                          className="px-2.5 py-1 rounded-md border border-[#C89D3C]/60 bg-[#FAF5E8] dark:bg-[#C89D3C]/15 text-[#9E7822] dark:text-[#D4AF37] text-[11px] font-bold inline-flex items-center gap-1 cursor-pointer hover:bg-[#C89D3C] hover:text-[#0E0E10]"
+                        >
+                          {showPreview ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                          <span>
+                            {showPreview
+                              ? t(lang, 'إخفاء المعاينة', 'Hide Preview')
+                              : t(lang, 'معاينة الفيديو قبل النشر', 'Preview Video')}
+                          </span>
+                        </button>
+                      )}
+                    </div>
+
+                    <input
+                      value={les.videoUrl || ''}
+                      onChange={(e) => {
+                        setFormError(null);
+                        updateLessonRow(idx, { videoUrl: e.target.value });
+                      }}
+                      placeholder="https://www.youtube.com/watch?v=... | https://youtu.be/... | m.youtube | shorts | live"
+                      className="w-full px-3 py-2 text-xs bg-[#F8F8F7] dark:bg-[#0E0E10] border border-[#E5E5E0] dark:border-white/10 rounded-lg font-mono-num"
+                      dir="ltr"
+                    />
+
+                    {videoParsed.kind === 'empty' && (
+                      <p className="text-[11px] text-neutral-500">
+                        {t(
+                          lang,
+                          'الصق أي رابط YouTube عادي (watch / m.youtube / youtu.be / Shorts / Live) — سيُحفظ الرابط الأصلي ويُحوّل تلقائياً إلى مشغل التضمين الآمن عند العرض.',
+                          'Paste any standard YouTube link (watch / m.youtube / youtu.be / Shorts / Live). The original URL is stored and auto-converted to youtube-nocookie on playback.'
+                        )}
+                      </p>
+                    )}
+
+                    {videoParsed.kind === 'youtube' && videoParsed.isValid && (
+                      <div className="flex flex-wrap items-center gap-2 text-[11px] text-emerald-700 dark:text-emerald-400">
+                        <span className="inline-flex items-center gap-1 font-bold">
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          <span>{t(lang, 'تم التحقق من الرابط تلقائياً', 'Valid YouTube Link')}</span>
+                        </span>
+                        <span className="px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950/50 font-mono-num" dir="ltr">
+                          ID: {videoParsed.videoId}
+                        </span>
+                        <span className="text-neutral-500 dark:text-neutral-400">
+                          · {t(lang, 'التشغيل عبر youtube-nocookie.com', 'Renders via youtube-nocookie.com')}
+                        </span>
+                      </div>
+                    )}
+
+                    {videoParsed.kind === 'direct_video' && videoParsed.isValid && (
+                      <div className="flex items-center gap-1.5 text-[11px] text-emerald-700 dark:text-emerald-400 font-semibold">
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        <span>{t(lang, 'ملف فيديو مباشر صالح', 'Valid direct video URL')}</span>
+                      </div>
+                    )}
+
+                    {videoParsed.kind === 'invalid' && (
+                      <div className="flex items-start gap-1.5 text-[11px] text-rose-600 dark:text-rose-400 font-semibold">
+                        <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                        <span>{lang === 'ar' ? videoParsed.errorAr : videoParsed.errorEn}</span>
+                      </div>
+                    )}
+
+                    {showPreview && videoParsed.isValid && (
+                      <div className="pt-2 border-t border-[#F0F0EC] dark:border-white/10">
+                        <AcademyVideoPlayer
+                          key={`preview_${les.id}_${videoParsed.videoId || les.videoUrl}`}
+                          url={les.videoUrl}
+                          title={les.titleAr || les.titleEn || `Lesson ${idx + 1}`}
+                          posterUrl={editing.thumbnailUrl}
+                          compact
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  <textarea
                     required
-                    value={les.titleAr}
-                    onChange={(e) => updateLessonRow(idx, { titleAr: e.target.value })}
-                    placeholder={t(lang, 'عنوان الدرس (عربي) *', 'Lesson Title (AR) *')}
-                    className="md:col-span-2 px-3 py-1.5 text-xs bg-white dark:bg-[#17171B] border border-[#E5E5E0] dark:border-white/10 rounded-lg"
-                  />
-                  <input
-                    type="number"
-                    min={1}
-                    value={les.durationMinutes}
-                    onChange={(e) => updateLessonRow(idx, { durationMinutes: Number(e.target.value) })}
-                    placeholder={t(lang, 'الدقائق', 'Mins')}
-                    className="px-3 py-1.5 text-xs bg-white dark:bg-[#17171B] border border-[#E5E5E0] dark:border-white/10 rounded-lg font-mono-num"
-                  />
-                  <input
-                    value={les.videoUrl || ''}
-                    onChange={(e) => updateLessonRow(idx, { videoUrl: e.target.value })}
-                    placeholder="YouTube/Vimeo embed URL (optional)"
-                    className="px-3 py-1.5 text-xs bg-white dark:bg-[#17171B] border border-[#E5E5E0] dark:border-white/10 rounded-lg font-mono-num"
-                    dir="ltr"
+                    rows={3}
+                    value={les.contentAr}
+                    onChange={(e) => updateLessonRow(idx, { contentAr: e.target.value })}
+                    placeholder={t(lang, 'محتوى الدرس الشارح وأوامر التطبيق...', 'Lesson content & configuration commands...')}
+                    className="w-full px-3 py-2 text-xs bg-white dark:bg-[#17171B] border border-[#E5E5E0] dark:border-white/10 rounded-lg"
                   />
                 </div>
-                <textarea
-                  required
-                  rows={3}
-                  value={les.contentAr}
-                  onChange={(e) => updateLessonRow(idx, { contentAr: e.target.value })}
-                  placeholder={t(lang, 'محتوى الدرس الشارح وأوامر التطبيق...', 'Lesson content & configuration commands...')}
-                  className="w-full px-3 py-2 text-xs bg-white dark:bg-[#17171B] border border-[#E5E5E0] dark:border-white/10 rounded-lg"
-                />
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* Dynamic Quiz Builder */}
@@ -507,6 +627,13 @@ export function AdminAcademyModule() {
             ))}
           </div>
 
+          {formError && (
+            <div className="p-3 rounded-lg bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-500/40 text-xs font-semibold text-rose-700 dark:text-rose-300 flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{formError}</span>
+            </div>
+          )}
+
           <div className="flex items-center justify-between pt-2">
             <label className="inline-flex items-center gap-2 text-xs font-semibold cursor-pointer">
               <input
@@ -555,7 +682,11 @@ export function AdminAcademyModule() {
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={() => setEditing({ ...course })}
+                  onClick={() => {
+                    setFormError(null);
+                    setPreviewLessonIds({});
+                    setEditing({ ...course });
+                  }}
                   className="px-3 py-1.5 rounded-lg border border-[#E5E5E0] dark:border-white/10 hover:border-[#C89D3C] text-xs font-semibold inline-flex items-center gap-1 cursor-pointer"
                 >
                   <Edit3 className="w-3.5 h-3.5" />

@@ -18,6 +18,12 @@
     scroll-behavior: smooth;
     background-color: #F8F8F7;
     color: #0E0E10;
+    overflow-x: clip;
+  }
+
+  body {
+    overflow-x: clip;
+    -webkit-tap-highlight-color: transparent;
   }
 
   html.dark {
@@ -56,6 +62,38 @@
   }
 }
 
+@layer components {
+  /* Royal Gold Primary CTA */
+  .btn-royal {
+    @apply inline-flex items-center justify-center gap-2 min-h-[46px] px-6 py-3 rounded-xl font-bold text-sm text-[#0E0E10] bg-gradient-to-l from-[#D4AF37] via-[#C89D3C] to-[#B68B29] hover:brightness-105 shadow-md shadow-[#C89D3C]/25 active:scale-[0.98] transition-all duration-150 cursor-pointer whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2;
+  }
+
+  /* Obsidian Primary CTA (Turns Royal Gold in Dark Mode) */
+  .btn-obsidian {
+    @apply inline-flex items-center justify-center gap-2 min-h-[44px] px-5 py-2.5 rounded-xl font-bold text-sm bg-[#0E0E10] dark:bg-[#C89D3C] text-white dark:text-[#0E0E10] border border-[#C89D3C]/40 hover:bg-[#C89D3C] hover:text-[#0E0E10] dark:hover:bg-[#D4AF37] shadow-sm active:scale-[0.98] transition-all duration-150 cursor-pointer whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C89D3C];
+  }
+
+  /* Crisp Secondary Button */
+  .btn-secondary-royal {
+    @apply inline-flex items-center justify-center gap-2 min-h-[44px] px-4 py-2.5 rounded-xl font-semibold text-sm bg-white dark:bg-[#17171B] text-[#0E0E10] dark:text-neutral-100 border border-[#E2DFD5] dark:border-white/15 hover:border-[#C89D3C] hover:text-[#9E7822] dark:hover:text-[#D4AF37] active:scale-[0.98] transition-all duration-150 cursor-pointer whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C89D3C];
+  }
+
+  /* Unified Royal Icon Container */
+  .icon-box-royal {
+    @apply w-11 h-11 rounded-xl bg-gradient-to-br from-[#FAF3DD] to-[#F3E5BD] dark:from-[#C89D3C]/20 dark:to-[#9E7822]/10 border border-[#C89D3C]/45 text-[#8E691B] dark:text-[#E2BF59] flex items-center justify-center shrink-0 transition-transform duration-150;
+  }
+
+  /* Royal Halo around Academy Icon */
+  .academy-royal-ring {
+    @apply bg-gradient-to-br from-[#F3D98B]/40 via-[#C89D3C]/25 to-[#9E7822]/30 border border-[#C89D3C] text-[#8A6414] dark:text-[#F0CF6E] shadow-[0_0_12px_rgba(200,157,60,0.28)];
+  }
+
+  /* Unified Surface Card */
+  .royal-card {
+    @apply bg-white dark:bg-[#17171B] border border-[#E5E3DA] dark:border-white/10 rounded-2xl shadow-sm hover:border-[#C89D3C]/65 transition-all duration-200;
+  }
+}
+
 /* Subtle metallic gold surface accent */
 .gold-shimmer-line {
   background: linear-gradient(90deg, transparent, #C89D3C 25%, #E8C975 50%, #C89D3C 75%, transparent);
@@ -72,7 +110,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .product-3d-card {
+  .product-3d-card,
+  .btn-royal,
+  .btn-obsidian,
+  .btn-secondary-royal {
     transition: none;
   }
 }
@@ -113,4 +154,3 @@
     page-break-inside: avoid !important;
   }
 }
-

@@ -439,9 +439,13 @@ export async function syncUserProfileOnLogin(params: {
 }): Promise<UserProfile> {
   const path = `users/${params.uid}`;
   const ref = doc(db, 'users', params.uid);
+  const cleanEmail = (params.email || '').trim().slice(0, 160);
+  const fallbackName = cleanEmail.split('@')[0] || 'User';
+  const cleanDisplayName = ((params.displayName || '').trim() || fallbackName).slice(0, 120);
+
   try {
     const snap = await getDoc(ref);
-    const isBootstrap = params.email.toLowerCase() === BOOTSTRAP_OWNER_EMAIL.toLowerCase();
+    const isBootstrap = cleanEmail.toLowerCase() === BOOTSTRAP_OWNER_EMAIL.toLowerCase();
     if (snap.exists()) {
       const existing = snap.data() as UserProfile;
       if (isBootstrap && (existing.role !== 'super_admin' || (existing.permissions?.length || 0) < ALL_ADMIN_PERMISSIONS.length)) {
@@ -459,8 +463,8 @@ export async function syncUserProfileOnLogin(params: {
     const now = new Date().toISOString();
     const profile: UserProfile = {
       uid: params.uid,
-      email: params.email,
-      displayName: params.displayName || params.email.split('@')[0],
+      email: cleanEmail,
+      displayName: cleanDisplayName,
       role: isBootstrap ? 'super_admin' : 'customer',
       permissions: isBootstrap ? ALL_ADMIN_PERMISSIONS : [],
       status: 'active',
@@ -475,8 +479,8 @@ export async function syncUserProfileOnLogin(params: {
         type: 'new_customer',
         titleAr: 'تسجيل عميل جديد',
         titleEn: 'New Customer Registered',
-        messageAr: `انضم العميل ${profile.displayName} (${profile.email}) إلى المنصة.`,
-        messageEn: `Customer ${profile.displayName} (${profile.email}) registered.`,
+        messageAr: `انضم العميل ${profile.displayName} (${profile.email}) إلى المنصة.`.slice(0, 500),
+        messageEn: `Customer ${profile.displayName} (${profile.email}) registered.`.slice(0, 500),
         relatedId: profile.uid,
       });
     }

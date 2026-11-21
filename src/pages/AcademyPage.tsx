@@ -10,6 +10,7 @@ import {
   PlayCircle,
   Search,
   ShieldCheck,
+  Trophy,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext.tsx';
 import { t } from '../i18n/translations.ts';
@@ -29,6 +30,7 @@ import type {
 } from '../types/index.ts';
 import { downloadCertificatePdf } from '../utils/certificatePdf.ts';
 import { ResilientImage } from '../components/ResilientImage.tsx';
+import { AcademyVideoPlayer } from '../components/AcademyVideoPlayer.tsx';
 
 const TRACK_LABELS: { id: 'all' | AcademyTrack; ar: string; en: string }[] = [
   { id: 'all', ar: 'جميع المسارات', en: 'All Tracks' },
@@ -52,7 +54,10 @@ export function AcademyPage() {
   const { lang, firebaseUser, userProfile, signInWithGoogle, academyCourses } = useApp();
 
   const [tab, setTab] = useState<'courses' | 'my_learning' | 'verify'>(() => {
-    return new URLSearchParams(window.location.search).get('verify') ? 'verify' : 'courses';
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('verify') || params.get('tab') === 'verify') return 'verify';
+    if (params.get('tab') === 'my_learning') return 'my_learning';
+    return 'courses';
   });
   const [trackFilter, setTrackFilter] = useState<'all' | AcademyTrack>('all');
   const [levelFilter, setLevelFilter] = useState<'all' | AcademyLevel>('all');
@@ -270,67 +275,126 @@ export function AcademyPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 space-y-8">
       {/* Official Academy Header */}
-      <div className="bg-[#0E0E10] text-white rounded-2xl p-6 sm:p-8 border border-[#C89D3C]/35 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-        <div className="space-y-2 max-w-2xl">
-          <div className="text-xs font-semibold text-[#D4AF37] inline-flex items-center gap-1.5">
-            <GraduationCap className="w-4 h-4" />
-            <span>{t(lang, 'التعليم والتأهيل الهندسي · عاصمة الشبكات', 'Professional Networking Education')}</span>
+      <div className="bg-gradient-to-br from-[#0E0E10] via-[#151519] to-[#1C170C] text-white rounded-3xl border border-[#C89D3C]/50 overflow-hidden shadow-xl">
+        <div className="h-[2px] w-full gold-shimmer-line" />
+        <div className="p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div className="space-y-3 max-w-2xl">
+            <div className="flex items-center gap-3">
+              <span className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#D4AF37] to-[#9E7822] text-[#0E0E10] flex items-center justify-center shrink-0 shadow-lg shadow-[#C89D3C]/30 ring-2 ring-[#F0CF6E]/40">
+                <GraduationCap className="w-7 h-7" />
+              </span>
+              <div className="space-y-0.5">
+                <div className="inline-flex items-center gap-2">
+                  <span className="px-2 py-0.5 rounded-md bg-[#C89D3C] text-[#0E0E10] text-[10px] font-extrabold">
+                    {lang === 'ar' ? 'جديد' : 'NEW'}
+                  </span>
+                  <span className="text-xs font-bold text-[#D4AF37]">
+                    {t(lang, 'التعليم والتأهيل الهندسي · عاصمة الشبكات', 'Professional Networking Education')}
+                  </span>
+                </div>
+                <h1 className="text-2xl sm:text-3xl font-extrabold font-display">
+                  {t(
+                    lang,
+                    'أكاديمية عاصمة الشبكات – تعلّم، اختبر، واربح الجوائز',
+                    'ASEMA Networks Academy — Learn, Test & Win Prizes'
+                  )}
+                </h1>
+              </div>
+            </div>
+            <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed">
+              {t(
+                lang,
+                '8 مسارات تخصصية شاملة، دروس فيديو تطبيقية، اختبارات تقييم فورية، مسابقات وسحوبات دورية على جوائز قيّمة، وشهادات PDF موثقة برقم تحقق ورمز QR.',
+                '8 specialized networking tracks, practical video lessons, interactive quizzes, seasonal contests & prize draws, and verifiable QR PDF certificates.'
+              )}
+            </p>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold font-display">
-            {t(
-              lang,
-              'أكاديمية عاصمة الشبكات – تعلّم، طوّر، احترف',
-              'ASEMA Networks Academy — Learn, Develop, Master'
-            )}
-          </h1>
-          <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed">
-            {t(
-              lang,
-              '8 مسارات تخصصية شاملة، دروس تطبيقية، تتبع للتقدم، اختبارات تفاعلية، وشهادات إتمام إلكترونية PDF موثقة برقم تحقق فريد ورمز QR.',
-              '8 specialized networking tracks, practical lessons, interactive quizzes, and verifiable PDF completion certificates with QR verification.'
-            )}
-          </p>
+
+          <div className="flex flex-wrap gap-2 bg-[#17171B] p-1.5 rounded-2xl border border-white/10 shrink-0">
+            <button
+              type="button"
+              onClick={() => {
+                setTab('courses');
+                setActiveCourse(null);
+              }}
+              className={`min-h-[42px] px-4 py-2 rounded-xl text-xs font-bold cursor-pointer active:scale-95 transition-all ${
+                tab === 'courses' ? 'bg-[#C89D3C] text-[#0E0E10] shadow-sm' : 'text-neutral-300 hover:text-white'
+              }`}
+            >
+              {t(lang, 'الدورات والمسارات', 'Tracks & Courses')}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setTab('my_learning');
+                setActiveCourse(null);
+              }}
+              className={`min-h-[42px] px-4 py-2 rounded-xl text-xs font-bold cursor-pointer active:scale-95 transition-all ${
+                tab === 'my_learning'
+                  ? 'bg-[#C89D3C] text-[#0E0E10] shadow-sm'
+                  : 'text-neutral-300 hover:text-white'
+              }`}
+            >
+              {t(lang, 'تعليمي وشهاداتي', 'My Learning')} ({certificates.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setTab('verify');
+                setActiveCourse(null);
+              }}
+              className={`min-h-[42px] px-4 py-2 rounded-xl text-xs font-bold cursor-pointer active:scale-95 transition-all ${
+                tab === 'verify' ? 'bg-[#C89D3C] text-[#0E0E10] shadow-sm' : 'text-neutral-300 hover:text-white'
+              }`}
+            >
+              {t(lang, 'التحقق من الشهادات', 'Verify Certificate')}
+            </button>
+          </div>
         </div>
 
-        <div className="flex flex-wrap gap-2 bg-[#17171B] p-1.5 rounded-xl border border-white/10 shrink-0">
-          <button
-            type="button"
-            onClick={() => {
-              setTab('courses');
-              setActiveCourse(null);
-            }}
-            className={`px-4 py-2.5 rounded-lg text-xs font-bold cursor-pointer ${
-              tab === 'courses' ? 'bg-[#C89D3C] text-[#0E0E10]' : 'text-neutral-300 hover:text-white'
-            }`}
-          >
-            {t(lang, 'الدورات والمسارات', 'Tracks & Courses')}
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setTab('my_learning');
-              setActiveCourse(null);
-            }}
-            className={`px-4 py-2.5 rounded-lg text-xs font-bold cursor-pointer ${
-              tab === 'my_learning'
-                ? 'bg-[#C89D3C] text-[#0E0E10]'
-                : 'text-neutral-300 hover:text-white'
-            }`}
-          >
-            {t(lang, 'تعليمي وشهاداتي', 'My Learning')} ({certificates.length})
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setTab('verify');
-              setActiveCourse(null);
-            }}
-            className={`px-4 py-2.5 rounded-lg text-xs font-bold cursor-pointer ${
-              tab === 'verify' ? 'bg-[#C89D3C] text-[#0E0E10]' : 'text-neutral-300 hover:text-white'
-            }`}
-          >
-            {t(lang, 'التحقق من الشهادات', 'Verify Certificate')}
-          </button>
+        {/* Quizzes, Competitions & Prize Draws Strip */}
+        <div className="border-t border-white/10 bg-[#141418]/90 px-6 sm:px-8 py-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="flex items-start gap-3">
+            <span className="w-9 h-9 rounded-xl bg-[#C89D3C]/20 border border-[#C89D3C]/40 text-[#E2BF59] flex items-center justify-center shrink-0">
+              <CheckCircle2 className="w-4 h-4" />
+            </span>
+            <div>
+              <div className="text-xs font-bold text-white">
+                {t(lang, 'الاختبارات والتقييم الفوري', 'Interactive Quizzes & Grading')}
+              </div>
+              <p className="text-[11px] text-neutral-400 mt-0.5">
+                {t(lang, 'اختبر مهاراتك بعد كل دورة واجمع نقاط التميز', 'Evaluate your engineering knowledge after every course')}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-3">
+            <span className="w-9 h-9 rounded-xl bg-[#C89D3C]/20 border border-[#C89D3C]/40 text-[#E2BF59] flex items-center justify-center shrink-0">
+              <Trophy className="w-4 h-4" />
+            </span>
+            <div>
+              <div className="text-xs font-bold text-white">
+                {t(lang, 'المسابقات والسحوبات والجوائز', 'Contests, Draws & Rewards')}
+              </div>
+              <p className="text-[11px] text-neutral-400 mt-0.5">
+                {t(lang, 'فرص ربح أجهزة شبكات وجوائز شهرية للمتفوقين', 'Monthly hardware prize draws for high-scoring graduates')}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-3">
+            <span className="w-9 h-9 rounded-xl bg-[#C89D3C]/20 border border-[#C89D3C]/40 text-[#E2BF59] flex items-center justify-center shrink-0">
+              <Award className="w-4 h-4" />
+            </span>
+            <div>
+              <div className="text-xs font-bold text-white">
+                {t(lang, 'شهادات موثقة برمز QR', 'QR-Verified PDF Certificates')}
+              </div>
+              <p className="text-[11px] text-neutral-400 mt-0.5">
+                {t(lang, 'توثيق رقمي فوري يمكن لأي جهة عمل فحصه أونلاين', 'Instant digital proof verifiable by any employer online')}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -497,15 +561,13 @@ export function AcademyPage() {
               ) : (
                 activeLesson && (
                   <div className="space-y-4">
-                    {activeLesson.videoUrl && (
-                      <div className="aspect-video rounded-xl overflow-hidden bg-black border border-[#E5E5E0] dark:border-white/10">
-                        <iframe
-                          src={activeLesson.videoUrl}
-                          title={activeLesson.titleAr}
-                          className="w-full h-full"
-                          allowFullScreen
-                        />
-                      </div>
+                    {activeLesson.videoUrl && activeLesson.videoUrl.trim() && (
+                      <AcademyVideoPlayer
+                        key={activeLesson.id}
+                        url={activeLesson.videoUrl}
+                        title={lang === 'ar' ? activeLesson.titleAr : activeLesson.titleEn}
+                        posterUrl={activeCourse.thumbnailUrl}
+                      />
                     )}
 
                     <div className="p-5 rounded-xl bg-[#F8F8F7] dark:bg-[#0E0E10] border border-[#E5E5E0] dark:border-white/10 space-y-4">
@@ -649,7 +711,7 @@ export function AcademyPage() {
                     <button
                       type="button"
                       onClick={() => void openCourse(course)}
-                      className="w-full py-2.5 rounded-xl bg-[#0E0E10] dark:bg-[#C89D3C] text-white dark:text-[#0E0E10] hover:bg-[#C89D3C] hover:text-[#0E0E10] text-xs font-bold inline-flex items-center justify-center gap-2 cursor-pointer"
+                      className="btn-obsidian w-full !text-xs"
                     >
                       <PlayCircle className="w-4 h-4" />
                       <span>

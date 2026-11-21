@@ -63,9 +63,11 @@ const BADGE_LABELS: Record<string, { ar: string; en: string }> = {
 export function AccountPage() {
   const {
     lang,
+    authReady,
     firebaseUser,
     userProfile,
     signInWithGoogle,
+    retryProfileSync,
     authLoading,
     authError,
     clearAuthError,
@@ -167,6 +169,54 @@ export function AccountPage() {
     };
   }, [firebaseUser, userProfile]);
 
+  if (!authReady) {
+    return (
+      <div className="min-h-[55vh] flex items-center justify-center text-sm text-neutral-500">
+        {t(lang, 'جاري استعادة الجلسة والتحقق من الحساب...', 'Restoring session and verifying account...')}
+      </div>
+    );
+  }
+
+  if (firebaseUser && !userProfile) {
+    return (
+      <div className="max-w-xl mx-auto px-4 sm:px-6 py-16 text-center space-y-6">
+        <div className="bg-white dark:bg-[#17171B] border border-[#E5E5E0] dark:border-white/10 rounded-2xl p-8 sm:p-10 space-y-5">
+          <div className="w-12 h-12 rounded-xl bg-[#FAF5E8] dark:bg-[#C89D3C]/15 text-[#9E7822] dark:text-[#D4AF37] flex items-center justify-center mx-auto">
+            <User className="w-6 h-6" />
+          </div>
+          <h1 className="text-xl font-bold text-[#0E0E10] dark:text-white">
+            {t(lang, 'جاري مزامنة بيانات حسابك', 'Syncing Your Account Profile')}
+          </h1>
+          <p className="text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">
+            {authError ||
+              t(
+                lang,
+                'تم التحقق من هويتك بنجاح، يرجى إعادة المحاولة لإكمال تحميل بيانات حسابك.',
+                'Your Google account is signed in. Please retry to finish loading your profile.'
+              )}
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button
+              type="button"
+              onClick={retryProfileSync}
+              disabled={authLoading}
+              className="flex-1 py-2.5 px-5 rounded-lg bg-[#0E0E10] dark:bg-[#C89D3C] text-white dark:text-[#0E0E10] text-sm font-bold hover:bg-[#C89D3C] hover:text-[#0E0E10] cursor-pointer disabled:opacity-60"
+            >
+              {authLoading ? t(lang, 'جاري التحديث...', 'Refreshing...') : t(lang, 'إعادة تحميل الحساب', 'Retry Loading Profile')}
+            </button>
+            <button
+              type="button"
+              onClick={logout}
+              className="py-2.5 px-5 rounded-lg border border-[#E5E5E0] dark:border-white/15 text-sm font-semibold text-neutral-700 dark:text-neutral-200 hover:border-[#C89D3C] cursor-pointer"
+            >
+              {t(lang, 'تسجيل الخروج', 'Sign Out')}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (!firebaseUser || !userProfile) {
     return (
       <div className="max-w-xl mx-auto px-4 sm:px-6 py-16 text-center space-y-6">
@@ -185,12 +235,12 @@ export function AccountPage() {
             )}
           </p>
           {authError && (
-            <div className="flex items-start justify-between gap-3 text-start bg-amber-50 border border-amber-200 text-amber-900 rounded-lg px-3.5 py-2.5 text-xs">
+            <div className="flex items-start justify-between gap-3 text-start bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-500/40 text-amber-900 dark:text-amber-200 rounded-lg px-3.5 py-2.5 text-xs">
               <span>{authError}</span>
               <button
                 type="button"
                 onClick={clearAuthError}
-                className="text-amber-700 hover:text-amber-950 shrink-0 cursor-pointer"
+                className="text-amber-700 dark:text-amber-300 hover:text-amber-950 shrink-0 cursor-pointer"
                 aria-label="Dismiss"
               >
                 <X className="w-4 h-4" />

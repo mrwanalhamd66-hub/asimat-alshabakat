@@ -47,10 +47,10 @@ export function TrackingPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12 space-y-8">
       <div className="text-center space-y-2">
-        <h1 className="text-2xl sm:text-3xl font-bold text-[#0E0E10]">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0E0E10] dark:text-white font-display">
           {t(lang, 'تتبع حالة الحجز والطلب', 'Track Your Reservation')}
         </h1>
-        <p className="text-sm text-neutral-600">
+        <p className="text-sm text-neutral-600 dark:text-neutral-300">
           {t(
             lang,
             'أدخل رقم المرجع (مثل ASM-123456) ورقم الهاتف المسجل لمتابعة حالة تجهيز جهازك.',
@@ -61,11 +61,11 @@ export function TrackingPage() {
 
       <form
         onSubmit={handleLookup}
-        className="bg-white border border-[#E5E5E0] rounded-2xl p-6 space-y-4 shadow-sm"
+        className="royal-card p-6 space-y-4"
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-neutral-700 mb-1">
+            <label className="block text-xs font-bold text-neutral-700 dark:text-neutral-200 mb-1.5">
               {t(lang, 'رقم المرجع *', 'Booking Reference *')}
             </label>
             <input
@@ -74,11 +74,11 @@ export function TrackingPage() {
               value={refInput}
               onChange={(e) => setRefInput(e.target.value)}
               placeholder="ASM-123456"
-              className="w-full px-3.5 py-2.5 text-sm bg-[#F8F8F7] border border-[#E5E5E0] rounded-lg font-mono-num uppercase focus:outline-none focus:border-[#C89D3C]"
+              className="w-full min-h-[44px] px-3.5 py-2.5 text-sm bg-[#F8F8F7] dark:bg-[#0E0E10] text-[#0E0E10] dark:text-white border border-[#E5E3DA] dark:border-white/15 rounded-xl font-mono-num uppercase focus:outline-none focus:border-[#C89D3C]"
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-neutral-700 mb-1">
+            <label className="block text-xs font-bold text-neutral-700 dark:text-neutral-200 mb-1.5">
               {t(lang, 'رقم الهاتف *', 'Phone Number *')}
             </label>
             <input
@@ -87,14 +87,14 @@ export function TrackingPage() {
               value={phoneInput}
               onChange={(e) => setPhoneInput(e.target.value)}
               placeholder="770XXXXXX"
-              className="w-full px-3.5 py-2.5 text-sm bg-[#F8F8F7] border border-[#E5E5E0] rounded-lg font-mono-num focus:outline-none focus:border-[#C89D3C]"
+              className="w-full min-h-[44px] px-3.5 py-2.5 text-sm bg-[#F8F8F7] dark:bg-[#0E0E10] text-[#0E0E10] dark:text-white border border-[#E5E3DA] dark:border-white/15 rounded-xl font-mono-num focus:outline-none focus:border-[#C89D3C]"
             />
           </div>
         </div>
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3 rounded-lg bg-[#0E0E10] text-white text-sm font-semibold hover:bg-[#C89D3C] hover:text-[#0E0E10] transition-colors inline-flex items-center justify-center gap-2 cursor-pointer"
+          className="btn-royal w-full"
         >
           <Search className="w-4 h-4" />
           <span>
@@ -106,15 +106,15 @@ export function TrackingPage() {
       </form>
 
       {searched && !loading && !result && (
-        <div className="bg-white border border-[#E5E5E0] rounded-xl p-8 text-center space-y-2">
-          <p className="text-sm font-semibold text-[#0E0E10]">
+        <div className="royal-card p-8 text-center space-y-2">
+          <p className="text-sm font-bold text-[#0E0E10] dark:text-white">
             {t(
               lang,
               'لم يتم العثور على حجز مطابق لهذه البيانات.',
               'No reservation matched this reference and phone number.'
             )}
           </p>
-          <p className="text-xs text-neutral-500">
+          <p className="text-xs text-neutral-500 dark:text-neutral-400">
             {t(
               lang,
               'تأكد من كتابة الرمز بصيغة ASM-XXXXXX وإدخال نفس رقم الهاتف المسجل.',
@@ -125,21 +125,21 @@ export function TrackingPage() {
       )}
 
       {result && (
-        <div className="bg-white border border-[#C89D3C]/40 rounded-2xl p-6 sm:p-8 space-y-6">
-          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#F0F0EC] pb-4">
+        <div className="royal-card !border-[#C89D3C]/50 p-6 sm:p-8 space-y-6">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#F0F0EC] dark:border-white/10 pb-4">
             <div>
-              <span className="text-xs text-neutral-500 block">
+              <span className="text-xs text-neutral-500 dark:text-neutral-400 block">
                 {t(lang, 'المرجع', 'Reference')}
               </span>
-              <span className="text-xl font-bold font-mono-num text-[#9E7822]">
+              <span className="text-xl font-bold font-mono-num text-[#9E7822] dark:text-[#D4AF37]">
                 {result.referenceNumber}
               </span>
             </div>
             <div className="text-end">
-              <span className="text-xs text-neutral-500 block">
+              <span className="text-xs text-neutral-500 dark:text-neutral-400 block">
                 {t(lang, 'الحالة الحالية', 'Current Status')}
               </span>
-              <span className="text-sm font-bold text-[#0E0E10]">
+              <span className="text-sm font-bold text-[#0E0E10] dark:text-white">
                 {lang === 'ar'
                   ? RESERVATION_STATUS_LABELS[result.status].ar
                   : RESERVATION_STATUS_LABELS[result.status].en}
@@ -149,31 +149,31 @@ export function TrackingPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
             <div>
-              <span className="text-xs text-neutral-500 block">
+              <span className="text-xs text-neutral-500 dark:text-neutral-400 block">
                 {t(lang, 'المنتج', 'Product')}
               </span>
-              <span className="font-semibold text-[#0E0E10]">
+              <span className="font-bold text-[#0E0E10] dark:text-white">
                 {lang === 'ar' ? result.productNameAr : result.productNameEn}
               </span>
             </div>
             <div>
-              <span className="text-xs text-neutral-500 block">
+              <span className="text-xs text-neutral-500 dark:text-neutral-400 block">
                 {t(lang, 'الكمية / الإجمالي', 'Qty / Total')}
               </span>
-              <span className="font-mono-num font-semibold">
+              <span className="font-mono-num font-bold text-[#0E0E10] dark:text-[#D4AF37]">
                 {result.quantity} × · {formatCurrency(result.totalPrice)}
               </span>
             </div>
             <div>
-              <span className="text-xs text-neutral-500 block">
+              <span className="text-xs text-neutral-500 dark:text-neutral-400 block">
                 {t(lang, 'المحافظة', 'Governorate')}
               </span>
-              <span className="font-semibold">{result.governorate || '-'}</span>
+              <span className="font-semibold text-[#0E0E10] dark:text-white">{result.governorate || '-'}</span>
             </div>
           </div>
 
           {result.status === 'cancelled' ? (
-            <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 text-sm text-rose-800 font-medium">
+            <div className="bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-700/40 rounded-xl p-4 text-sm text-rose-800 dark:text-rose-200 font-medium">
               {t(lang, 'تم إلغاء هذا الحجز.', 'This reservation has been cancelled.')}
             </div>
           ) : (
@@ -193,12 +193,12 @@ export function TrackingPage() {
                     key={step}
                     className={`p-3 rounded-xl border text-center space-y-1.5 ${
                       done
-                        ? 'bg-[#FAF5E8] border-[#C89D3C] text-[#0E0E10]'
-                        : 'bg-[#F8F8F7] border-[#E5E5E0] text-neutral-400'
+                        ? 'bg-[#FAF5E8] dark:bg-[#C89D3C]/20 border-[#C89D3C] text-[#0E0E10] dark:text-white'
+                        : 'bg-[#F8F8F7] dark:bg-[#0E0E10] border-[#E5E3DA] dark:border-white/10 text-neutral-400'
                     }`}
                   >
-                    <Icon className={`w-4 h-4 mx-auto ${done ? 'text-[#9E7822]' : ''}`} />
-                    <div className="text-[11px] font-semibold">
+                    <Icon className={`w-4 h-4 mx-auto ${done ? 'text-[#9E7822] dark:text-[#D4AF37]' : ''}`} />
+                    <div className="text-[11px] font-bold">
                       {lang === 'ar'
                         ? RESERVATION_STATUS_LABELS[step].ar
                         : RESERVATION_STATUS_LABELS[step].en}

@@ -13,7 +13,7 @@ import { t } from '../i18n/translations.ts';
 import { useOnlineStatus, usePWAInstall } from '../hooks/usePWAInstall.ts';
 
 const PUBLIC_APP_URL =
-  'https://ais-pre-nmxodldki3vn37kolvhdkz-270842469232.europe-west2.run.app';
+  'https://ais-pre-gh6txokjbzx434i4bvoe6x-270842469232.europe-west2.run.app';
 
 export function PWAInstallButton({
   variant = 'header',

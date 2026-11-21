@@ -187,9 +187,9 @@ export function LiveChatWidget() {
   );
 
   return (
-    <div className={`fixed bottom-5 ${lang === 'ar' ? 'left-5' : 'right-5'} z-40`}>
+    <div className={`fixed bottom-20 md:bottom-5 ${lang === 'ar' ? 'left-4 sm:left-5' : 'right-4 sm:right-5'} z-40`}>
       {open ? (
-        <div className="w-[340px] sm:w-[380px] bg-white border border-[#E5E5E0] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[540px]">
+        <div className="w-[min(calc(100vw-2rem),380px)] bg-white dark:bg-[#17171B] border border-[#E5E3DA] dark:border-white/15 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[70vh] sm:max-h-[540px]">
           {/* Header */}
           <div className="bg-[#0E0E10] text-white px-4 py-3.5 flex items-center justify-between border-b border-[#C89D3C]/30">
             <div>
@@ -207,7 +207,7 @@ export function LiveChatWidget() {
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="p-1.5 rounded-lg text-neutral-300 hover:text-white hover:bg-white/10 cursor-pointer"
+              className="w-9 h-9 rounded-xl text-neutral-300 hover:text-white hover:bg-white/10 flex items-center justify-center active:scale-95 cursor-pointer"
               aria-label="Close chat"
             >
               <X className="w-4 h-4" />
@@ -215,8 +215,8 @@ export function LiveChatWidget() {
           </div>
 
           {!started ? (
-            <form onSubmit={handleStartChat} className="p-5 space-y-3.5 bg-[#F8F8F7]">
-              <p className="text-xs text-neutral-600 leading-relaxed">
+            <form onSubmit={handleStartChat} className="p-5 space-y-3.5 bg-[#F8F8F7] dark:bg-[#0E0E10]">
+              <p className="text-xs text-neutral-600 dark:text-neutral-300 leading-relaxed">
                 {t(
                   lang,
                   'أدخل اسمك ورقم هاتفك لبدء محادثة فورية مع مهندسي الشبكات والمبيعات.',
@@ -224,7 +224,7 @@ export function LiveChatWidget() {
                 )}
               </p>
               <div>
-                <label className="block text-xs font-semibold text-neutral-700 mb-1">
+                <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-200 mb-1">
                   {t(lang, 'الاسم *', 'Name *')}
                 </label>
                 <input
@@ -233,11 +233,11 @@ export function LiveChatWidget() {
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
                   placeholder={t(lang, 'اسمك الكريم', 'Your name')}
-                  className="w-full px-3 py-2 text-sm bg-white border border-[#E5E5E0] rounded-lg focus:outline-none focus:border-[#C89D3C]"
+                  className="w-full min-h-[42px] px-3 py-2 text-sm bg-white dark:bg-[#17171B] text-[#0E0E10] dark:text-white border border-[#E5E3DA] dark:border-white/15 rounded-xl focus:outline-none focus:border-[#C89D3C]"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-neutral-700 mb-1">
+                <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-200 mb-1">
                   {t(lang, 'رقم الهاتف / واتساب', 'Phone / WhatsApp')}
                 </label>
                 <input
@@ -245,12 +245,12 @@ export function LiveChatWidget() {
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value)}
                   placeholder="770XXXXXX"
-                  className="w-full px-3 py-2 text-sm bg-white border border-[#E5E5E0] rounded-lg font-mono-num focus:outline-none focus:border-[#C89D3C]"
+                  className="w-full min-h-[42px] px-3 py-2 text-sm bg-white dark:bg-[#17171B] text-[#0E0E10] dark:text-white border border-[#E5E3DA] dark:border-white/15 rounded-xl font-mono-num focus:outline-none focus:border-[#C89D3C]"
                 />
               </div>
               <button
                 type="submit"
-                className="w-full py-2.5 px-4 rounded-lg bg-[#0E0E10] text-white text-sm font-semibold hover:bg-[#C89D3C] hover:text-[#0E0E10] transition-colors cursor-pointer"
+                className="btn-obsidian w-full"
               >
                 {t(lang, 'بدء المحادثة المباشرة', 'Start Live Chat')}
               </button>
@@ -258,9 +258,9 @@ export function LiveChatWidget() {
                 href={`https://wa.me/${storeSettings.whatsappNumber || '967770581056'}?text=${whatsappSummaryText}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-2 px-4 rounded-lg border border-[#E5E5E0] bg-white text-neutral-700 hover:border-[#C89D3C] text-xs font-semibold flex items-center justify-center gap-2 transition-colors"
+                className="btn-secondary-royal w-full text-xs"
               >
-                <MessageCircle className="w-4 h-4 text-emerald-700" />
+                <MessageCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>{t(lang, 'أو تواصل مباشرة عبر واتساب', 'Or message us via WhatsApp')}</span>
               </a>
             </form>
@@ -268,10 +268,10 @@ export function LiveChatWidget() {
             <>
               <div
                 ref={scrollRef}
-                className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#F8F8F7] min-h-[260px]"
+                className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#F8F8F7] dark:bg-[#0E0E10] min-h-[240px]"
               >
                 {messages.length === 0 ? (
-                  <div className="text-center py-8 text-xs text-neutral-500">
+                  <div className="text-center py-8 text-xs text-neutral-500 dark:text-neutral-400">
                     {t(
                       lang,
                       'مرحباً بك في عاصمة الشبكات! اكتب استفسارك عن الأجهزة أو الأسعار أو الحجوزات.',
@@ -289,11 +289,11 @@ export function LiveChatWidget() {
                         <div
                           className={`max-w-[82%] rounded-xl px-3.5 py-2.5 text-xs leading-relaxed ${
                             isCustomer
-                              ? 'bg-[#0E0E10] text-white'
-                              : 'bg-white border border-[#E5E5E0] text-[#0E0E10]'
+                              ? 'bg-[#0E0E10] dark:bg-[#C89D3C] text-white dark:text-[#0E0E10]'
+                              : 'bg-white dark:bg-[#17171B] border border-[#E5E3DA] dark:border-white/15 text-[#0E0E10] dark:text-white'
                           }`}
                         >
-                          <div className="text-[10px] opacity-65 mb-1 font-medium">
+                          <div className="text-[10px] opacity-70 mb-1 font-medium">
                             {msg.senderName}
                           </div>
                           <p className="whitespace-pre-wrap">{msg.text}</p>
@@ -303,13 +303,13 @@ export function LiveChatWidget() {
                   })
                 )}
                 {agentTyping && (
-                  <div className="text-[11px] text-[#9E7822] font-medium">
+                  <div className="text-[11px] text-[#9E7822] dark:text-[#D4AF37] font-medium">
                     {t(lang, 'ممثل الدعم يكتب الآن...', 'Support agent is typing...')}
                   </div>
                 )}
               </div>
 
-              <div className="px-3 py-1.5 bg-white border-t border-[#F0F0EC] flex items-center justify-between text-[11px] text-neutral-500">
+              <div className="px-3 py-2 bg-white dark:bg-[#17171B] border-t border-[#F0F0EC] dark:border-white/10 flex items-center justify-between text-[11px] text-neutral-500 dark:text-neutral-400">
                 <span>
                   {connected
                     ? t(lang, 'مباشر عبر WebSocket', 'Live WebSocket')
@@ -319,28 +319,28 @@ export function LiveChatWidget() {
                   href={`https://wa.me/${storeSettings.whatsappNumber || '967770581056'}?text=${whatsappSummaryText}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-emerald-700 hover:underline font-medium inline-flex items-center gap-1"
+                  className="text-emerald-700 dark:text-emerald-400 hover:underline font-semibold inline-flex items-center gap-1"
                 >
-                  <MessageCircle className="w-3 h-3" />
+                  <MessageCircle className="w-3.5 h-3.5" />
                   <span>{t(lang, 'تحويل لواتساب', 'WhatsApp Handoff')}</span>
                 </a>
               </div>
 
               <form
                 onSubmit={handleSend}
-                className="p-3 bg-white border-t border-[#E5E5E0] flex items-center gap-2"
+                className="p-3 bg-white dark:bg-[#17171B] border-t border-[#E5E3DA] dark:border-white/10 flex items-center gap-2"
               >
                 <input
                   type="text"
                   value={inputText}
                   onChange={(e) => handleInputChange(e.target.value)}
                   placeholder={t(lang, 'اكتب رسالتك هنا...', 'Type your message...')}
-                  className="flex-1 px-3 py-2 text-sm bg-[#F8F8F7] border border-[#E5E5E0] rounded-lg focus:outline-none focus:border-[#C89D3C]"
+                  className="flex-1 min-h-[42px] px-3 py-2 text-sm bg-[#F8F8F7] dark:bg-[#0E0E10] text-[#0E0E10] dark:text-white border border-[#E5E3DA] dark:border-white/15 rounded-xl focus:outline-none focus:border-[#C89D3C]"
                 />
                 <button
                   type="submit"
                   disabled={!connected || !inputText.trim()}
-                  className="p-2.5 rounded-lg bg-[#0E0E10] text-white hover:bg-[#C89D3C] hover:text-[#0E0E10] disabled:opacity-40 transition-colors cursor-pointer"
+                  className="w-11 h-11 rounded-xl bg-[#0E0E10] dark:bg-[#C89D3C] text-white dark:text-[#0E0E10] hover:bg-[#C89D3C] hover:text-[#0E0E10] disabled:opacity-40 flex items-center justify-center active:scale-95 transition-all cursor-pointer shrink-0"
                   aria-label="Send message"
                 >
                   <Send className="w-4 h-4" />
@@ -353,10 +353,10 @@ export function LiveChatWidget() {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="px-4 py-3 rounded-full bg-[#0E0E10] text-white border border-[#C89D3C]/60 shadow-xl hover:bg-[#1A1A20] transition-transform hover:-translate-y-0.5 flex items-center gap-2.5 cursor-pointer"
+          className="min-h-[46px] px-4 py-2.5 rounded-full bg-[#0E0E10] text-white border border-[#C89D3C]/70 shadow-xl hover:bg-[#1A1A20] active:scale-95 transition-all flex items-center gap-2.5 cursor-pointer"
         >
           <MessageSquare className="w-5 h-5 text-[#D4AF37]" />
-          <span className="text-sm font-semibold whitespace-nowrap">
+          <span className="text-xs sm:text-sm font-bold whitespace-nowrap">
             {t(lang, 'الدعم المباشر', 'Live Chat')}
           </span>
         </button>

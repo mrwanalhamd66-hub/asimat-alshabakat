@@ -36,7 +36,7 @@ export function ProductCard({ product, overridePrice, offerTag }: ProductCardPro
 
   return (
     <article
-      className="group bg-white dark:bg-[#17171B] border border-[#E5E5E0] dark:border-white/10 rounded-xl overflow-hidden flex flex-col transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-[#C89D3C]/50"
+      className="group royal-card overflow-hidden flex flex-col hover:-translate-y-0.5 hover:shadow-lg"
     >
       <div className="aspect-[4/3] w-full bg-[#F3F3F1] dark:bg-[#0E0E10] overflow-hidden relative">
         <button
@@ -68,10 +68,10 @@ export function ProductCard({ product, overridePrice, offerTag }: ProductCardPro
               ? t(lang, 'إزالة من المفضلة', 'Remove from Favorites')
               : t(lang, 'حفظ في المفضلة', 'Save to Favorites')
           }
-          className={`absolute top-3 end-3 z-10 w-9 h-9 rounded-lg border flex items-center justify-center transition-all cursor-pointer disabled:opacity-60 ${
+          className={`absolute top-3 end-3 z-10 w-10 h-10 rounded-xl border flex items-center justify-center transition-all active:scale-95 cursor-pointer disabled:opacity-60 ${
             favorited
               ? 'bg-[#0E0E10] text-[#D4AF37] border-[#C89D3C] shadow-md'
-              : 'bg-white/95 backdrop-blur-sm text-neutral-700 border-[#E5E5E0] hover:border-[#C89D3C] hover:text-[#9E7822] shadow-sm'
+              : 'bg-white/95 dark:bg-[#17171B]/95 backdrop-blur-sm text-neutral-700 dark:text-neutral-200 border-[#E5E3DA] dark:border-white/15 hover:border-[#C89D3C] hover:text-[#9E7822] dark:hover:text-[#D4AF37] shadow-sm'
           }`}
         >
           <Heart className={`w-4 h-4 ${favorited ? 'fill-[#D4AF37]' : ''}`} />
@@ -118,7 +118,7 @@ export function ProductCard({ product, overridePrice, offerTag }: ProductCardPro
             onClick={handleOpen}
             className="text-start block w-full cursor-pointer"
           >
-            <h3 className="text-base font-semibold text-[#0E0E10] dark:text-white leading-snug line-clamp-2 group-hover:text-[#9E7822] dark:group-hover:text-[#D4AF37] transition-colors">
+            <h3 className="text-base font-bold text-[#0E0E10] dark:text-white leading-snug line-clamp-2 group-hover:text-[#9E7822] dark:group-hover:text-[#D4AF37] transition-colors">
               {name}
             </h3>
           </button>
@@ -140,7 +140,7 @@ export function ProductCard({ product, overridePrice, offerTag }: ProductCardPro
             )}
           </div>
 
-          <div className="flex items-center gap-1.5 shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             {!unavailable && (
               <button
                 type="button"
@@ -150,15 +150,15 @@ export function ProductCard({ product, overridePrice, offerTag }: ProductCardPro
                 }}
                 aria-label={t(lang, 'أضف إلى السلة', 'Add to Cart')}
                 title={t(lang, 'أضف إلى السلة', 'Add to Cart')}
-                className="p-2 rounded-lg border border-[#E5E5E0] dark:border-white/15 bg-[#F8F8F7] dark:bg-[#0E0E10] text-[#0E0E10] dark:text-[#D4AF37] hover:border-[#C89D3C] transition-colors cursor-pointer"
+                className="w-11 h-11 rounded-xl border border-[#E5E3DA] dark:border-white/15 bg-[#F8F8F7] dark:bg-[#0E0E10] text-[#0E0E10] dark:text-[#D4AF37] hover:border-[#C89D3C] flex items-center justify-center active:scale-95 transition-all cursor-pointer"
               >
-                <ShoppingCart className="w-4 h-4" />
+                <ShoppingCart className="w-[18px] h-[18px]" />
               </button>
             )}
             <button
               type="button"
               onClick={handleOpen}
-              className="px-3.5 py-2 text-xs font-semibold rounded-lg bg-[#0E0E10] dark:bg-[#C89D3C] text-white dark:text-[#0E0E10] hover:bg-[#C89D3C] hover:text-[#0E0E10] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+              className="min-h-[44px] px-4 py-2 text-xs sm:text-sm font-bold rounded-xl bg-[#0E0E10] dark:bg-[#C89D3C] text-white dark:text-[#0E0E10] hover:bg-[#C89D3C] hover:text-[#0E0E10] dark:hover:bg-[#D4AF37] active:scale-95 transition-all whitespace-nowrap shrink-0 cursor-pointer shadow-xs"
             >
               {unavailable
                 ? t(lang, 'عرض البدائل', 'Alternatives')

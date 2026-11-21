@@ -20,14 +20,14 @@ export function OffersPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 space-y-8">
-      <div className="bg-[#0E0E10] text-white rounded-2xl p-7 sm:p-10 border border-[#C89D3C]/30">
-        <span className="text-xs font-semibold text-[#D4AF37]">
+      <div className="bg-[#0E0E10] text-white rounded-3xl p-7 sm:p-10 border border-[#C89D3C]/40 shadow-xl">
+        <span className="text-xs font-bold text-[#D4AF37]">
           {t(lang, 'مركز العروض الديناميكي', 'Dynamic Offers Center')}
         </span>
-        <h1 className="text-2xl sm:text-4xl font-bold mt-2">
+        <h1 className="text-2xl sm:text-4xl font-extrabold mt-2 font-display">
           {t(lang, 'أقوى عروض معدات الشبكات في اليمن', 'Exclusive Networking Hardware Deals')}
         </h1>
-        <p className="text-sm text-neutral-300 mt-2 max-w-2xl">
+        <p className="text-sm text-neutral-300 mt-2 max-w-2xl leading-relaxed">
           {t(
             lang,
             'عروض يومية وأسبوعية وحصرية مفعّلة ومجدولة زمنياً من إدارة عاصمة الشبكات. احجز العرض قبل انتهاء العداد أو نفاد الكمية.',
@@ -37,14 +37,14 @@ export function OffersPage() {
       </div>
 
       {/* Section Filter Tabs */}
-      <div className="flex items-center gap-1.5 p-1 bg-neutral-200/70 rounded-xl overflow-x-auto">
+      <div className="flex items-center gap-1.5 p-1.5 bg-[#EAE8E1] dark:bg-[#17171B] border border-[#DFDCD2] dark:border-white/10 rounded-xl overflow-x-auto max-w-full">
         <button
           type="button"
           onClick={() => setSelectedSection('all')}
-          className={`px-3.5 py-2 text-xs font-semibold rounded-lg whitespace-nowrap shrink-0 cursor-pointer transition-colors ${
+          className={`min-h-[40px] px-4 py-2 text-xs font-bold rounded-lg whitespace-nowrap shrink-0 cursor-pointer active:scale-95 transition-all ${
             selectedSection === 'all'
-              ? 'bg-white text-[#0E0E10] shadow-sm'
-              : 'text-neutral-600 hover:text-[#0E0E10]'
+              ? 'bg-[#0E0E10] dark:bg-[#C89D3C] text-white dark:text-[#0E0E10] shadow-sm'
+              : 'text-neutral-700 dark:text-neutral-300 hover:text-[#0E0E10] dark:hover:text-white'
           }`}
         >
           {t(lang, 'كل العروض النشطة', 'All Active Offers')}
@@ -54,10 +54,10 @@ export function OffersPage() {
             key={key}
             type="button"
             onClick={() => setSelectedSection(key)}
-            className={`px-3.5 py-2 text-xs font-semibold rounded-lg whitespace-nowrap shrink-0 cursor-pointer transition-colors ${
+            className={`min-h-[40px] px-4 py-2 text-xs font-bold rounded-lg whitespace-nowrap shrink-0 cursor-pointer active:scale-95 transition-all ${
               selectedSection === key
-                ? 'bg-white text-[#0E0E10] shadow-sm'
-                : 'text-neutral-600 hover:text-[#0E0E10]'
+                ? 'bg-[#0E0E10] dark:bg-[#C89D3C] text-white dark:text-[#0E0E10] shadow-sm'
+                : 'text-neutral-700 dark:text-neutral-300 hover:text-[#0E0E10] dark:hover:text-white'
             }`}
           >
             {lang === 'ar' ? OFFER_SECTION_LABELS[key].ar : OFFER_SECTION_LABELS[key].en}
@@ -66,11 +66,11 @@ export function OffersPage() {
       </div>
 
       {displayed.length === 0 ? (
-        <div className="bg-white border border-[#E5E5E0] rounded-xl p-12 text-center space-y-2">
-          <p className="text-base font-semibold text-[#0E0E10]">
+        <div className="royal-card p-12 text-center space-y-2">
+          <p className="text-base font-bold text-[#0E0E10] dark:text-white">
             {t(lang, 'لا توجد عروض نشطة في هذا القسم حالياً', 'No active offers in this section right now')}
           </p>
-          <p className="text-xs text-neutral-500">
+          <p className="text-xs text-neutral-500 dark:text-neutral-400">
             {t(lang, 'جرب اختيار قسم آخر أو تصفح الكتالوج الكامل.', 'Select another section or browse the full catalog.')}
           </p>
         </div>
@@ -87,9 +87,9 @@ export function OffersPage() {
             return (
               <article
                 key={offer.id}
-                className="bg-white border border-[#E5E5E0] rounded-xl overflow-hidden flex flex-col hover:border-[#C89D3C]/60 transition-colors"
+                className="royal-card overflow-hidden flex flex-col hover:-translate-y-0.5 hover:shadow-lg"
               >
-                <div className="aspect-[4/3] bg-[#F3F3F1] overflow-hidden">
+                <div className="aspect-[4/3] bg-[#F3F3F1] dark:bg-[#0E0E10] overflow-hidden">
                   <ResilientImage
                     src={offer.imageUrl || linked?.images?.[0]}
                     alt={lang === 'ar' ? offer.titleAr : offer.titleEn}
@@ -99,7 +99,7 @@ export function OffersPage() {
                 <div className="p-5 flex-1 flex flex-col justify-between gap-4">
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="font-semibold text-[#9E7822]">
+                      <span className="font-bold text-[#9E7822] dark:text-[#D4AF37]">
                         {lang === 'ar'
                           ? OFFER_SECTION_LABELS[offer.sectionType].ar
                           : OFFER_SECTION_LABELS[offer.sectionType].en}
@@ -107,23 +107,23 @@ export function OffersPage() {
                       </span>
                       <CountdownTimer endDate={offer.endDate} />
                     </div>
-                    <h2 className="text-base font-bold text-[#0E0E10]">
+                    <h2 className="text-base font-bold text-[#0E0E10] dark:text-white">
                       {lang === 'ar' ? offer.titleAr : offer.titleEn}
                     </h2>
-                    <p className="text-xs text-neutral-600 line-clamp-2">
+                    <p className="text-xs text-neutral-600 dark:text-neutral-400 line-clamp-2">
                       {lang === 'ar' ? offer.descriptionAr : offer.descriptionEn}
                     </p>
                     {offer.availableQuantity !== undefined && (
-                      <div className="text-xs text-neutral-500 font-mono-num">
+                      <div className="text-xs text-neutral-500 dark:text-neutral-400 font-mono-num">
                         {t(lang, 'الكمية المتاحة بالعرض:', 'Offer stock:')}{' '}
                         {offer.availableQuantity}
                       </div>
                     )}
                   </div>
 
-                  <div className="pt-3 border-t border-[#F0F0EC] flex items-center justify-between">
+                  <div className="pt-3 border-t border-[#F0F0EC] dark:border-white/10 flex items-center justify-between gap-2">
                     <div className="flex items-baseline gap-2">
-                      <span className="text-lg font-bold text-[#0E0E10] font-mono-num">
+                      <span className="text-lg font-bold text-[#0E0E10] dark:text-[#D4AF37] font-mono-num">
                         {formatCurrency(offer.discountedPrice)}
                       </span>
                       <span className="text-xs text-neutral-400 line-through font-mono-num">
@@ -137,7 +137,7 @@ export function OffersPage() {
                           setSelectedProduct(linked);
                         }
                       }}
-                      className="px-4 py-2 rounded-lg bg-[#0E0E10] text-white text-xs font-semibold hover:bg-[#C89D3C] hover:text-[#0E0E10] transition-colors cursor-pointer"
+                      className="btn-obsidian !text-xs"
                     >
                       {t(lang, 'احجز بسعر العرض', 'Reserve Offer')}
                     </button>

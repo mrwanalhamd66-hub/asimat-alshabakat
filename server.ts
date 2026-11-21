@@ -161,6 +161,33 @@ async function startServer() {
   const app = express();
   app.use(express.json({ limit: '15mb' }));
 
+  // Security headers configured with explicit allowlists for YouTube nocookie embeds & Firebase
+  app.use((_req, res, next) => {
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader(
+      'Permissions-Policy',
+      'accelerometer=(self "https://www.youtube-nocookie.com" "https://www.youtube.com"), autoplay=(self "https://www.youtube-nocookie.com" "https://www.youtube.com"), encrypted-media=(self "https://www.youtube-nocookie.com" "https://www.youtube.com"), fullscreen=(self "https://www.youtube-nocookie.com" "https://www.youtube.com"), gyroscope=(self "https://www.youtube-nocookie.com" "https://www.youtube.com"), picture-in-picture=(self "https://www.youtube-nocookie.com" "https://www.youtube.com")'
+    );
+    res.setHeader(
+      'Content-Security-Policy',
+      [
+        "default-src 'self'",
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.youtube.com https://www.youtube-nocookie.com https://s.ytimg.com https://apis.google.com https://www.gstatic.com https://www.googleapis.com https://*.firebaseapp.com",
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+        "font-src 'self' data: https://fonts.gstatic.com",
+        "img-src 'self' data: blob: https://i.ytimg.com https://i9.ytimg.com https://yt3.ggpht.com https://lh3.googleusercontent.com https:",
+        "frame-src 'self' https://www.youtube-nocookie.com https://www.youtube.com https://accounts.google.com https://apis.google.com https://*.firebaseapp.com https://*.web.app",
+        "child-src 'self' blob: https://www.youtube-nocookie.com https://www.youtube.com https://*.firebaseapp.com",
+        "media-src 'self' blob: data: https://*.googlevideo.com https://www.youtube-nocookie.com https://www.youtube.com https:",
+        "connect-src 'self' ws: wss: https://*.googleapis.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.firebaseapp.com https://www.youtube-nocookie.com https://www.youtube.com https://i.ytimg.com https:",
+        "object-src 'none'",
+        "base-uri 'self'",
+      ].join('; ')
+    );
+    next();
+  });
+
   // Serve uploaded images safely
   app.use('/uploads', express.static(UPLOAD_DIR));
 

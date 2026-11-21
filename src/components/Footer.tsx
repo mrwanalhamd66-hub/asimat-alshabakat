@@ -1,4 +1,4 @@
-import { MapPin, MessageCircle, Phone } from 'lucide-react';
+import { GraduationCap, MapPin, MessageCircle, Phone } from 'lucide-react';
 import { useApp } from '../context/AppContext.tsx';
 import { t } from '../i18n/translations.ts';
 import { PWAInstallButton } from './PWAInstallPrompt.tsx';
@@ -31,25 +31,36 @@ export function Footer() {
           <h3 className="text-sm font-semibold text-white">
             {t(lang, 'منصة عاصمة الشبكات', 'Platform Modules')}
           </h3>
-          <ul className="grid grid-cols-2 md:grid-cols-1 gap-2 text-xs sm:text-sm text-neutral-400">
+          <ul className="grid grid-cols-2 md:grid-cols-1 gap-1.5 text-xs sm:text-sm text-neutral-400">
             {[
-              { path: '/catalog', ar: 'كتالوج المنتجات', en: 'Hardware Catalog' },
+              { path: '/', ar: 'الرئيسية', en: 'Home' },
+              { path: '/catalog', ar: 'المتجر والمنتجات', en: 'Hardware Store' },
+              { path: '/academy', ar: 'أكاديمية عاصمة الشبكات', en: 'ASEMA Academy', highlight: true },
+              { path: '/offers', ar: 'مركز العروض', en: 'Offers Center' },
+              { path: '/track', ar: 'تتبع الطلبات والحجز', en: 'Track Orders' },
               { path: '/planner', ar: 'مخطط الشبكات والباقات', en: 'Network Planner & Packages' },
               { path: '/assistant', ar: 'المساعد الذكي والكاميرا', en: 'AI Assistant & Camera' },
-              { path: '/academy', ar: 'أكاديمية عاصمة الشبكات', en: 'ASEMA Academy' },
               { path: '/community', ar: 'مجتمع المهندسين والمختبر', en: 'Community & Lab' },
               { path: '/market', ar: 'مؤشر السوق الذكي', en: 'Market Index' },
-              { path: '/offers', ar: 'مركز العروض', en: 'Offers Center' },
-              { path: '/track', ar: 'تتبع الحجز', en: 'Track Reservation' },
               { path: '/admin', ar: 'مركز الإدارة الخاص', en: 'Admin Control Center' },
             ].map((link) => (
               <li key={link.path}>
                 <button
                   type="button"
                   onClick={() => navigate(link.path)}
-                  className="hover:text-[#D4AF37] transition-colors cursor-pointer text-start"
+                  className={`min-h-[36px] py-1 inline-flex items-center gap-2 transition-colors cursor-pointer text-start active:scale-95 ${
+                    link.highlight
+                      ? 'text-[#D4AF37] font-bold hover:text-white'
+                      : 'hover:text-[#D4AF37]'
+                  }`}
                 >
-                  {lang === 'ar' ? link.ar : link.en}
+                  {link.highlight && <GraduationCap className="w-4 h-4 shrink-0" />}
+                  <span>{lang === 'ar' ? link.ar : link.en}</span>
+                  {link.highlight && (
+                    <span className="px-1.5 py-0.5 rounded bg-[#C89D3C] text-[#0E0E10] text-[10px] font-extrabold leading-none">
+                      {lang === 'ar' ? 'جديد' : 'NEW'}
+                    </span>
+                  )}
                 </button>
               </li>
             ))}
@@ -65,9 +76,9 @@ export function Footer() {
               <a
                 key={phone}
                 href={`tel:${phone}`}
-                className="flex items-center gap-2 text-neutral-300 hover:text-[#D4AF37] transition-colors font-mono-num"
+                className="min-h-[36px] flex items-center gap-2 text-neutral-300 hover:text-[#D4AF37] transition-colors font-mono-num"
               >
-                <Phone className="w-3.5 h-3.5 text-[#C89D3C]" />
+                <Phone className="w-4 h-4 text-[#C89D3C]" />
                 <span>{phone}</span>
               </a>
             ))}
@@ -76,7 +87,7 @@ export function Footer() {
                 href={`https://wa.me/${storeSettings.whatsappNumber || '967770581056'}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#C89D3C]/15 border border-[#C89D3C]/40 text-[#D4AF37] hover:bg-[#C89D3C] hover:text-[#0E0E10] transition-colors text-xs font-semibold"
+                className="min-h-[44px] inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#C89D3C]/15 border border-[#C89D3C]/50 text-[#D4AF37] hover:bg-[#C89D3C] hover:text-[#0E0E10] active:scale-95 transition-all text-xs font-bold"
               >
                 <MessageCircle className="w-4 h-4" />
                 <span>{t(lang, 'تواصل عبر واتساب', 'WhatsApp Support')}</span>

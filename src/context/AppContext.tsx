@@ -82,6 +82,7 @@ interface AppContextValue {
   isTrainerOrStaff: boolean;
   isSuperAdmin: boolean;
   signInWithGoogle: () => Promise<void>;
+  retryProfileSync: () => Promise<void>;
   logout: () => Promise<void>;
   products: Product[];
   categories: Category[];
@@ -237,33 +238,46 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const hydrateUserProfile = async (user: User) => {
+    if (!user.email) {
+      setUserProfile(null);
+      return;
+    }
+    try {
+      const prof = await syncUserProfileOnLogin({
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName || user.email.split('@')[0],
+      });
+      setUserProfile(prof);
+      setAuthError(null);
+      if (prof.role === 'super_admin' || prof.role === 'manager') {
+        await seedInitialStoreDataIfEmpty();
+      }
+    } catch (err) {
+      console.error('Profile sync error:', err);
+      setUserProfile(null);
+      setAuthError(
+        lang === 'ar'
+          ? 'تم تسجيل الدخول، لكن تعذر تحميل بيانات حسابك الآن. يرجى المحاولة مرة أخرى.'
+          : 'Signed in, but failed to load your profile right now. Please retry.'
+      );
+    }
+  };
+
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (user) => {
       setFirebaseUser(user);
       if (user) {
         setAuthError(null);
-      }
-      if (user && user.email) {
-        try {
-          const prof = await syncUserProfileOnLogin({
-            uid: user.uid,
-            email: user.email,
-            displayName: user.displayName || user.email.split('@')[0],
-          });
-          setUserProfile(prof);
-          if (prof.role === 'super_admin' || prof.role === 'manager') {
-            await seedInitialStoreDataIfEmpty();
-          }
-        } catch (err) {
-          console.error('Profile sync error:', err);
-          setUserProfile(null);
-        }
+        await hydrateUserProfile(user);
       } else {
         setUserProfile(null);
       }
       setAuthReady(true);
     });
     return () => unsub();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const isSuperAdmin = useMemo(() => {
@@ -350,6 +364,17 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const clearAuthError = () => setAuthError(null);
 
+  const retryProfileSync = async () => {
+    if (!auth.currentUser || authLoading) return;
+    setAuthLoading(true);
+    setAuthError(null);
+    try {
+      await hydrateUserProfile(auth.currentUser);
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
   const signInWithGoogle = async () => {
     if (authLoading) return;
     setAuthLoading(true);
@@ -361,6 +386,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         typeof err === 'object' && err !== null && 'code' in err
           ? String((err as { code?: unknown }).code)
           : '';
+      console.warn('Google sign-in interrupted:', code || err);
+
       if (
         code === 'auth/popup-closed-by-user' ||
         code === 'auth/cancelled-popup-request' ||
@@ -369,28 +396,39 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         setAuthError(
           lang === 'ar'
             ? 'تم إغلاق نافذة تسجيل الدخول قبل إتمام العملية. يمكنك المحاولة مرة أخرى.'
-            : 'The sign-in popup was closed before completing. Please try again.'
+            : 'The sign-in window was closed before completing. Please try again.'
         );
       } else if (code === 'auth/popup-blocked') {
         setAuthError(
           lang === 'ar'
             ? 'قام المتصفح بحظر نافذة تسجيل الدخول. يرجى السماح بالنوافذ المنبثقة لهذا الموقع ثم المحاولة مجدداً.'
-            : 'Your browser blocked the sign-in popup. Please allow popups for this site and try again.'
+            : 'Your browser blocked the sign-in window. Please allow popups for this site and try again.'
         );
-      } else if (code === 'auth/unauthorized-domain') {
+      } else if (code === 'auth/unauthorized-domain' || code === 'auth/operation-not-allowed') {
         setAuthError(
           lang === 'ar'
-            ? 'هذا النطاق غير مصرح به لتسجيل الدخول في إعدادات Firebase.'
-            : 'This domain is not authorized for Firebase sign-in.'
+            ? 'تعذر إتمام تسجيل الدخول من هذا الرابط حالياً. يرجى تحديث الصفحة أو فتح الرابط الرسمي للموقع، وإن استمرت المشكلة تواصل مع الدعم الفني.'
+            : 'Sign-in is currently unavailable from this address. Please refresh or open the official site URL, or contact support.'
+        );
+      } else if (code === 'auth/user-disabled') {
+        setAuthError(
+          lang === 'ar'
+            ? 'تم إيقاف هذا الحساب مؤقتاً. يرجى التواصل مع إدارة عاصمة الشبكات للمساعدة.'
+            : 'This account is currently disabled. Please contact ASEMA NETWORKS support.'
+        );
+      } else if (code === 'auth/too-many-requests') {
+        setAuthError(
+          lang === 'ar'
+            ? 'تم إجراء محاولات تسجيل دخول متكررة. يرجى الانتظار قليلاً ثم المحاولة مرة أخرى.'
+            : 'Too many sign-in attempts. Please wait a moment and try again.'
         );
       } else if (code === 'auth/network-request-failed') {
         setAuthError(
           lang === 'ar'
-            ? 'تعذر الاتصال بخادم المصادقة. تحقق من اتصال الإنترنت وحاول مرة أخرى.'
-            : 'Network error while connecting to Google sign-in. Check your connection and try again.'
+            ? 'تعذر الاتصال بخدمة تسجيل الدخول. تحقق من اتصال الإنترنت وحاول مرة أخرى.'
+            : 'Connection error while signing in. Please check your internet connection and try again.'
         );
       } else {
-        console.warn('Google sign-in failed:', err);
         setAuthError(
           lang === 'ar'
             ? 'تعذر إتمام تسجيل الدخول عبر Google حالياً. يرجى المحاولة مرة أخرى.'
@@ -578,6 +616,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         isTrainerOrStaff,
         isSuperAdmin,
         signInWithGoogle,
+        retryProfileSync,
         logout,
         products,
         categories,
